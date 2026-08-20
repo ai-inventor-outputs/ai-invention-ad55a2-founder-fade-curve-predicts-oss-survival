@@ -1,0 +1,104 @@
+{
+  "metadata": {
+    "description": "GitHub OSS repository metadata for Founder Fade hypothesis testing. Contains repo-level features and proxy survival labels (ACTIVE/INACTIVE).",
+    "source_datasets": [
+      "h1alexbel/github-repos (14,428 repos, MIT license, collected via ghminer tool)"
+    ],
+    "chosen_dataset": "h1alexbel/github-repos",
+    "selection_rationale": "Chosen over AmanPriyanshu/random-small-github-repositories due to: (1) larger coverage (14K vs 5.6K repos), (2) richer features (contributors, commits, pulls, issues, forks, stars, language, dates), (3) broader ecosystem (not limited to Android/Java), (4) confirmed provenance via ghminer GitHub repo.",
+    "label_definition": "ACTIVE if contributors>=5 OR (stars>=1000 AND activity_ratio>=0.5); INACTIVE if contributors<=2 AND activity_ratio<0.1. Proxy labels for downstream Founder Fade analysis.",
+    "total_examples": 14428,
+    "created_at": "2026-08-20T21:04:22.927918"
+  },
+  "datasets": [
+    {
+      "dataset": "h1alexbel/github-repos",
+      "examples": [
+        {
+          "input": "{\"repo\": \"waylaidwanderer/node-chatgpt-api\", \"branch\": \"main\", \"description\": \"A client implementation for ChatGPT and Bing AI. Available as a Node.js module, REST API server, and CLI app.\", \"topics\": \"chatgpt,chatgpt-api,gpt,openai,openai-api,api,api-rest,api-server,cli,nodejs\", \"created_at\": \"2023-01-07 04:35:34\", \"last_commit_date\": \"2023-10-10 21:53:44\", \"last_release_date\": \"2023-05-31T21:29:52Z\", \"contributors\": 35, \"pulls\": 227, \"commits\": 546, \"issues\": 48, \"forks\": 738, \"stars\": 4189, \"disk_usage\": 0.0, \"license\": \"MIT\", \"language\": \"JavaScript\"}",
+          "output": "ACTIVE",
+          "metadata_fold": 0,
+          "metadata_feature_names": [
+            "repo",
+            "branch",
+            "description",
+            "topics",
+            "created_at",
+            "last_commit_date",
+            "last_release_date",
+            "contributors",
+            "pulls",
+            "commits",
+            "issues",
+            "forks",
+            "stars",
+            "disk_usage",
+            "license",
+            "language"
+          ],
+          "metadata_task_type": "classification",
+          "metadata_n_classes": 2,
+          "metadata_row_index": 0,
+          "metadata_dataset_source": "h1alexbel/github-repos",
+          "metadata_repo_full_name": "waylaidwanderer/node-chatgpt-api"
+        },
+        {
+          "input": "{\"repo\": \"Exafunction/codeium.vim\", \"branch\": \"main\", \"description\": \"Free, ultrafast Copilot alternative for Vim and Neovim\", \"topics\": \"autocomplete,copilot,go,golang,javascript,neovim,python,typescript,vim,codeium\", \"created_at\": \"2023-01-03 19:24:30\", \"last_commit_date\": \"2024-05-03 19:48:56\", \"last_release_date\": \"\", \"contributors\": 39, \"pulls\": 168, \"commits\": 173, \"issues\": 69, \"forks\": 116, \"stars\": 3470, \"disk_usage\": 0.0, \"license\": \"MIT\", \"language\": \"Vim Script\"}",
+          "output": "ACTIVE",
+          "metadata_fold": 1,
+          "metadata_feature_names": [
+            "repo",
+            "branch",
+            "description",
+            "topics",
+            "created_at",
+            "last_commit_date",
+            "last_release_date",
+            "contributors",
+            "pulls",
+            "commits",
+            "issues",
+            "forks",
+            "stars",
+            "disk_usage",
+            "license",
+            "language"
+          ],
+          "metadata_task_type": "classification",
+          "metadata_n_classes": 2,
+          "metadata_row_index": 1,
+          "metadata_dataset_source": "h1alexbel/github-repos",
+          "metadata_repo_full_name": "Exafunction/codeium.vim"
+        },
+        {
+          "input": "{\"repo\": \"themesberg/flowbite-admin-dashboard\", \"branch\": \"main\", \"description\": \"Free and open-source admin dashboard template built with Tailwind CSS and Flowbite\", \"topics\": \"admin-dashboard,charts,css,dashboard,flowbite,html,hugo,javascript,tailwind,tailwindcss\", \"created_at\": \"2023-01-09 15:52:21\", \"last_commit_date\": \"2023-11-10 11:01:13\", \"last_release_date\": \"2023-01-16T20:42:56Z\", \"contributors\": 2, \"pulls\": 5, \"commits\": 82, \"issues\": 10, \"forks\": 403, \"stars\": 1691, \"disk_usage\": 0.0, \"license\": \"MIT\", \"language\": \"HTML\"}",
+          "output": "ACTIVE",
+          "metadata_fold": 2,
+          "metadata_feature_names": [
+            "repo",
+            "branch",
+            "description",
+            "topics",
+            "created_at",
+            "last_commit_date",
+            "last_release_date",
+            "contributors",
+            "pulls",
+            "commits",
+            "issues",
+            "forks",
+            "stars",
+            "disk_usage",
+            "license",
+            "language"
+          ],
+          "metadata_task_type": "classification",
+          "metadata_n_classes": 2,
+          "metadata_row_index": 2,
+          "metadata_dataset_source": "h1alexbel/github-repos",
+          "metadata_repo_full_name": "themesberg/flowbite-admin-dashboard"
+        }
+      ]
+    }
+  ]
+}

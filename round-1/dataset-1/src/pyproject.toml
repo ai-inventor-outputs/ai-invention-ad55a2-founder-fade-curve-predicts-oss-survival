@@ -1,0 +1,16 @@
+[project]
+name = "founder-fade-dataset"
+version = "1.0.0"
+requires-python = ">=3.12"
+description = "GitHub OSS repository metadata for Founder Fade hypothesis testing"
+dependencies = [
+    "loguru==0.7.3",
+    "numpy==2.5.2",
+    "pandas==3.0.5",
+    "python-dateutil==2.9.0.post0",
+    "six==1.17.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
