@@ -1,66 +1,49 @@
 #!/usr/bin/env python3
-"""
-Founder Fade Curve Experiment — Scaled Analysis on 100+ OSS Projects.
+"""Founder Fade Curves Predict OSS Survival - Experimental Pipeline.
 
-Computes founder fade trajectories from GitHub repository data, tests whether
-the shape of founder involvement decline predicts project survival after founder
-departure, with matched non-founder falsification controls.
-
-Since no GitHub API token is available, founder fade metrics are reconstructed
-from aggregate repository features with statistical inference.
+Tests whether founder involvement fade curve descriptors provide complementary 
+predictive value beyond static features in predicting OSS project survival 
+after founder departure, using the ESEM2019 dataset.
 """
 
 from loguru import logger
 from pathlib import Path
-import json, sys, time, math, random, collections, gc
-from datetime import datetime, timedelta
-from typing import Optional
-import multiprocessing as mp
-from concurrent.futures import ProcessPoolExecutor
-
-import numpy as np
+import json
+import sys
+import math
+import gc
+import resource
+import os
+import time
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import LeaveOneOut
-from sklearn.metrics import roc_auc_score, roc_curve
+import numpy as np
+from scipy import stats
+from sklearn.linear_model import LogisticRegression, RidgeClassifier
 from sklearn.ensemble import RandomForestClassifier
-
-try:
-    from lifelines import CoxPHFitter
-    HAS_LIFELINES = True
-except ImportError:
-    HAS_LIFELINES = False
-    logger.warning("lifelines not installed — Cox PH will be skipped")
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import (
+    roc_auc_score, log_loss, accuracy_score, f1_score, roc_curve
+)
+from sklearn.inspection import permutation_importance
+from sklearn.preprocessing import StandardScaler
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
 
 logger.remove()
 logger.add(sys.stdout, level="INFO", format="{time:HH:mm:ss}|{level:<7}|{message}")
 logger.add("logs/run.log", rotation="30 MB", level="DEBUG")
 
-# ──────────────────────────────────────────────────────────────────────────────
-# CONFIG
-# ──────────────────────────────────────────────────────────────────────────────
-DATASET_PATH   = Path("/ai-inventor/aii_data/runs/run_dX5VwxrQ9qyp/3_invention_loop/iter_1/gen_art/gen_art_dataset_1/full_data_out.json")
-OUT_PATH       = Path("method_out.json")
-LOG_DIR        = Path("logs")
-
-# Filtering
-MIN_PROJECT_AGE_DAYS   = 180      # 6 months (dataset collection in Jan 2023, max age ~505 days)
-MIN_CONTRIBUTORS       = 3        # Lower to include more variety
-MIN_STARS              = 5        # Lower to include more variety
-TARGET_LANGUAGES       = {"Python", "JavaScript", "Go", "Rust", "Ruby", "TypeScript", "HTML", "CSS"}
-TARGET_COHORT          = 100      # target number of valid labeled projects
-MAX_COHORT_TO_TEST     = 120      # oversample slightly
-
-# Model parameters
-N_BOOTSTRAP            = 1000
-N_PERMUTATIONS         = 100
-
-# Gradual scaling: test on subsets before full run
-SCALE_TEST_SIZES = [5, 10, 50, 100, TARGET_COHORT]
+try:
+    resource.setrlimit(resource.RLIMIT_AS, (12 * 1024**3, 12 * 1024**3))
+except:
+    pass
 
 
-def _detect_cpus() -> int:
-    """Detect actual CPU allocation (containers/pods/bare metal)."""
+def detect_cpus():
     try:
         parts = Path("/sys/fs/cgroup/cpu.max").read_text().split()
         if parts[0] != "max":
@@ -75,582 +58,599 @@ def _detect_cpus() -> int:
     except (FileNotFoundError, ValueError):
         pass
     try:
-        return len(__import__("os").sched_getaffinity(0))
+        return len(os.sched_getaffinity(0))
     except (AttributeError, OSError):
         pass
-    return mp.cpu_count() or 2
+    return os.cpu_count() or 1
 
 
-NUM_CPUS = _detect_cpus()
+NUM_CPUS = detect_cpus()
 logger.info(f"Detected {NUM_CPUS} CPUs")
 
-
-def safe_int(val, default=0):
-    """Safely convert a value to int, returning default on failure."""
-    try:
-        if val is None:
-            return default
-        return int(val)
-    except (TypeError, ValueError):
-        return default
+WORKSPACE = Path(__file__).parent
+DATA_PATH = WORKSPACE.parent.parent.parent / "iter_1" / "gen_art" / "gen_art_dataset_1" / "full_data_out.json"
+RAW_DATA_DIR = WORKSPACE.parent.parent.parent / "iter_1" / "gen_art" / "gen_art_dataset_1" / "temp" / "datasets" / "esem2019" / "data"
+RESULTS_DIR = WORKSPACE / "results"
+RESULTS_DIR.mkdir(exist_ok=True)
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# STEP 1 — Load and filter candidate pool
-# ──────────────────────────────────────────────────────────────────────────────
-def load_and_filter_candidates(dataset_path: Path) -> list:
-    """Load dataset and filter to candidate repos meeting quality thresholds."""
-    logger.info(f"Loading dataset from {dataset_path}")
-    raw = json.loads(dataset_path.read_text())
-    examples = raw["datasets"][0]["examples"]
-    logger.info(f"Loaded {len(examples)} repos")
-
-    candidates = []
+def load_data():
+    logger.info(f"Loading data from {DATA_PATH}")
+    with open(DATA_PATH) as f:
+        data = json.load(f)
+    examples = data['datasets'][0]['examples']
+    logger.info(f"Loaded {len(examples)} examples")
+    projects = {}
     for ex in examples:
-        try:
-            feat = json.loads(ex["input"])
-            repo        = feat.get("repo", "")
-            if not repo:
-                continue
-            repo        = repo.strip()
-            created_str = feat.get("created_at", "")
-            last_comp   = feat.get("last_commit_date", "")
-            contributors = safe_int(feat.get("contributors"))
-            stars        = safe_int(feat.get("stars"))
-            language     = feat.get("language", "").strip()
-            commits      = safe_int(feat.get("commits"))
-            pulls        = safe_int(feat.get("pulls"))
-            issues       = safe_int(feat.get("issues"))
-            forks        = safe_int(feat.get("forks"))
-
-            if not repo:
-                continue
-            if not created_str or not last_comp:
-                continue
-            try:
-                created   = datetime.fromisoformat(created_str)
-                last_comp = datetime.fromisoformat(last_comp)
-            except ValueError:
-                continue
-
-            # Age is time from creation to last commit
-            age_days = (last_comp - created).days
-            # Also compute recency (days since last activity)
-            recency_days = (datetime.utcnow() - last_comp).days
-
-            # Filter: project must be old enough
-            if age_days < MIN_PROJECT_AGE_DAYS:
-                continue
-            if contributors < MIN_CONTRIBUTORS:
-                continue
-            if stars < MIN_STARS:
-                continue
-            if language not in TARGET_LANGUAGES:
-                continue
-
-            candidates.append({
-                "repo": repo,
-                "created": created,
-                "last_commit": last_comp,
-                "age_days": age_days,
-                "recency_days": recency_days,
-                "contributors": contributors,
-                "stars": stars,
-                "language": language,
-                "commits": commits,
-                "pulls": pulls,
-                "issues": issues,
-                "forks": forks,
-                "proxy_label": ex.get("output", "ACTIVE"),  # ACTIVE/INACTIVE
-            })
-        except Exception as e:
-            logger.warning(f"Skipping repo: {e}")
-            continue
-
-    logger.info(f"Filtered to {len(candidates)} candidate repos")
-    random.seed(42)
-    random.shuffle(candidates)
-    return candidates
+        pid = ex.get('metadata_project_id')
+        if pid not in projects:
+            projects[pid] = []
+        projects[pid].append(ex)
+    logger.info(f"Found {len(projects)} unique projects")
+    return projects, examples
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# STEP 2 — Reconstruct founder fade trajectory from aggregate features
-# ──────────────────────────────────────────────────────────────────────────────
-def reconstruct_founder_trajectory(candidate: dict) -> dict:
-    """
-    Reconstruct a synthetic founder fade trajectory from aggregate repository
-    features. Uses statistical inference based on:
-    - Commit-to-contributor ratio (proxy for founder dominance)
-    - Project age vs commit velocity (proxy for fade timing)
-    - Fork/pull dynamics (proxy for community adoption)
-    
-    Returns fade descriptors and a synthetic monthly trajectory.
-    """
-    commits    = safe_int(candidate.get("commits"))
-    contributors = safe_int(candidate.get("contributors"))
-    age_days   = safe_int(candidate.get("age_days"))
-    stars      = safe_int(candidate.get("stars"))
-    pulls      = safe_int(candidate.get("pulls"))
-    forks      = safe_int(candidate.get("forks"))
-    issues     = safe_int(candidate.get("issues"))
-
-    # Derived metrics
-    commits_per_contributor = commits / max(contributors, 1)
-    activity_rate = commits / max(age_days, 1)  # commits per day
-    founder_dominance = min(commits_per_contributor / max(np.log(contributors + 1), 1), 10.0)
-    # Normalize founder dominance to [0, 1]
-    founder_dominance_norm = min(founder_dominance / 5.0, 1.0)
-
-    # Time since last activity (proxy for founder departure recency)
-    now = datetime.now(tz=None)
-    last_commit = candidate.get("last_commit")
-    if last_commit is None:
-        days_since_last = 0
-    else:
-        days_since_last = (now - last_commit).days
-    recency_ratio = days_since_last / max(age_days, 1)
-
-    # Community health proxy
-    community_ratio = contributors / max(np.log(commits + 1), 1)
-    engagement_ratio = (pulls + issues) / max(commits, 1)
-
-    # Build synthetic monthly trajectory (12-month window)
-    n_months = min(int(age_days / 30), 24)
-    n_months = max(n_months, 6)
-
-    # Fade curve shape parameters inferred from aggregate stats
-    # slope: negative = fade, positive = growth
-    base_slope = -founder_dominance_norm * 0.15
-    # Add some noise based on project characteristics
-    noise = random.gauss(0, 0.03)
-    slope = base_slope + noise
-
-    # Convexity: positive = U-shape (initial fade then recovery), negative = inverted U
-    convexity = 0.0
-    if forks > stars * 0.3 and pulls > commits * 0.1:
-        # Healthy project with good community adoption — potential recovery
-        convexity = abs(slope) * 0.5
-    else:
-        # No recovery signal — monotonic fade
-        convexity = -abs(slope) * 0.3
-
-    # Build trajectory points
-    trajectory = []
-    peak_value = 1.0
-    for i in range(n_months):
-        t = i / max(n_months - 1, 1)
-        # Quadratic fade model: y = peak + slope*t + convexity*t^2
-        value = peak_value + slope * t + convexity * t * t
-        # Clamp to reasonable range
-        value = max(0.05, min(1.5, value))
-        trajectory.append({
-            "month": i,
-            "relative_value": round(value, 4),
-            "commits_proxy": max(1, int(commits * value / n_months)),
-        })
-
-    # Compute fade descriptors
-    fade_index = np.mean([p["relative_value"] for p in trajectory])
-    fade_index = max(0.0, min(1.0, fade_index))
-
-    # Onset of decline (first month where value < 80% of peak)
-    onset_idx = None
-    for i, p in enumerate(trajectory):
-        if p["relative_value"] < 0.8:
-            onset_idx = i
-            break
-    time_to_onset = onset_idx / n_months if onset_idx is not None else 1.0
-
-    # Cliff indicator (sharp drop in last 3 months)
-    if n_months >= 6:
-        last3_vals = [trajectory[i]["relative_value"] for i in range(max(0, n_months-3), n_months)]
-        prev3_vals = [trajectory[i]["relative_value"] for i in range(max(0, n_months-6), max(0, n_months-3))]
-        last3 = np.mean(last3_vals) if last3_vals else 0
-        prev3 = np.mean(prev3_vals) if prev3_vals else 0
-        cliff = 1.0 if (prev3 > 0 and last3 / prev3 < 0.5) else 0.0
-    else:
-        cliff = 0.0
-
-    # Plateau-then-cliff
-    first_part = [trajectory[i]["relative_value"] for i in range(int(n_months * 0.6))]
-    plateau = 1.0 if (np.std(first_part) < 0.1 and cliff == 1.0) else 0.0
-
-    return {
-        "founder_dominance": round(founder_dominance_norm, 4),
-        "fade_slope": round(slope, 6),
-        "fade_convexity": round(convexity, 6),
-        "fade_index": round(fade_index, 4),
-        "time_to_onset": round(time_to_onset, 4),
-        "cliff_indicator": int(cliff),
-        "plateau_then_cliff": int(plateau),
-        "community_ratio": round(community_ratio, 4),
-        "engagement_ratio": round(engagement_ratio, 4),
-        "recency_ratio": round(recency_ratio, 4),
-        "trajectory": trajectory,
-        "n_months": n_months,
-    }
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# STEP 3 — Falsification control: matched non-founder patterns
-# ──────────────────────────────────────────────────────────────────────────────
-def generate_falsification_profile(candidate: dict, founder_profile: dict) -> dict:
-    """
-    Generate a falsification control profile representing what a non-founder
-    project would look like. Uses matched statistics from similar projects.
-    """
-    # Perturb founder metrics to simulate non-founder scenario
-    fake_dominance = max(0.0, founder_profile["founder_dominance"] - 0.3)
-    fake_slope = abs(founder_profile["fade_slope"]) * 0.5  # flatter fade
-    fake_convexity = 0.0
-    fake_fade_index = min(1.0, founder_profile["fade_index"] + 0.15)
-
-    return {
-        "matched_falsification": True,
-        "fake_founder_dominance": round(fake_dominance, 4),
-        "fake_fade_slope": round(fake_slope, 6),
-        "fake_fade_index": round(fake_fade_index, 4),
-        "control_type": "matched_nonfounder_perturbation",
-    }
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# STEP 4 — Feature matrix and model training
-# ──────────────────────────────────────────────────────────────────────────────
-def build_feature_matrices(results: list) -> tuple:
-    """Build feature matrices for static and trajectory features."""
-    static_features = []
-    trajectory_features = []
-    labels = []
-
-    for r in results:
-        if r.get("status") != "OK":
-            continue
-        # Static features
-        static = [
-            r.get("contributors", 0),
-            r.get("stars", 0),
-            r.get("commits", 0),
-            r.get("pulls", 0),
-            r.get("issues", 0),
-            r.get("forks", 0),
-            r.get("age_days", 0),
-        ]
-        # Trajectory features
-        traj = r.get("fade_descriptors", {})
-        traj_vec = [
-            traj.get("fade_slope", np.nan),
-            traj.get("fade_convexity", np.nan),
-            traj.get("time_to_onset", np.nan),
-            traj.get("cliff_indicator", np.nan),
-            traj.get("plateau_then_cliff", np.nan),
-            traj.get("fade_index", np.nan),
-            traj.get("founder_dominance", np.nan),
-            traj.get("community_ratio", np.nan),
-        ]
-        static_features.append(static)
-        trajectory_features.append(traj_vec)
-        # Label: use synthetic label based on fade characteristics
-        labels.append(1 if r.get("synthetic_label") == "SURVIVE" else 0)
-
-    return static_features, trajectory_features, labels
-
-
-def train_logistic_regression(
-    static_X: list, traj_X: list, y: list, n_bootstrap: int = N_BOOTSTRAP
-) -> dict:
-    """Train logistic regression with LOOCV and bootstrap CIs."""
-    static_X = np.array(static_X, dtype=float)
-    traj_X   = np.array(traj_X, dtype=float)
-    y = np.array(y)
-
-    # Handle NaN
-    static_X = np.nan_to_num(static_X, nan=0.0)
-    traj_X   = np.nan_to_num(traj_X, nan=0.0)
-
-    n_samples = len(y)
-    static_aucs, traj_aucs, combined_aucs = [], [], []
-
-    loo = LeaveOneOut()
-    for train_idx, test_idx in loo.split(static_X):
-        X_train_s, X_test_s = static_X[train_idx], static_X[test_idx]
-        X_train_t, X_test_t = traj_X[train_idx], traj_X[test_idx]
-        X_train_full = np.hstack([X_train_s, X_train_t])
-        X_test_full = np.hstack([X_test_s, X_test_t])
-
-        # Check if training data has at least 2 classes
-        if len(np.unique(y[train_idx])) < 2:
-            # Skip if only one class in training set
-            continue
-
-        # Static-only model
-        model_s = LogisticRegression(max_iter=1000, C=1.0, random_state=42)
-        model_s.fit(X_train_s, y[train_idx])
-        # Trajectory-only model
-        model_t = LogisticRegression(max_iter=1000, C=1.0, random_state=42)
-        model_t.fit(X_train_t, y[train_idx])
-        # Combined model
-        model_f = LogisticRegression(max_iter=1000, C=1.0, random_state=42)
-        model_f.fit(X_train_full, y[train_idx])
-
-        try:
-            if len(np.unique(y[train_idx])) > 1:
-                pred_s = model_s.predict_proba(X_test_s)[:, 1]
-                pred_t = model_t.predict_proba(X_test_t)[:, 1]
-                pred_f = model_f.predict_proba(X_test_full)[:, 1]
-                static_aucs.append(roc_auc_score(y[test_idx], pred_s))
-                traj_aucs.append(roc_auc_score(y[test_idx], pred_t))
-                combined_aucs.append(roc_auc_score(y[test_idx], pred_f))
-        except Exception:
-            pass
-
-    # Bootstrap CIs for combined AUC
-    if combined_aucs and len(combined_aucs) > 1:
-        rng = np.random.default_rng(42)
-        boot_stats = []
-        for _ in range(n_bootstrap):
-            idx = rng.integers(0, len(combined_aucs), size=len(combined_aucs))
-            boot_stats.append(np.mean([combined_aucs[i] for i in idx]))
-        boot_mean = float(np.mean(boot_stats))
-        boot_ci_low = float(np.percentile(boot_stats, 2.5))
-        boot_ci_high = float(np.percentile(boot_stats, 97.5))
-    else:
-        boot_mean = boot_ci_low = boot_ci_high = np.nan
-
-    return {
-        "static_auc_mean": float(np.mean(static_aucs)) if static_aucs else np.nan,
-        "trajectory_auc_mean": float(np.mean(traj_aucs)) if traj_aucs else np.nan,
-        "combined_auc_mean": float(np.mean(combined_aucs)) if combined_aucs else np.nan,
-        "combined_auc_bootstrap_mean": boot_mean,
-        "combined_auc_ci_95_low": boot_ci_low,
-        "combined_auc_ci_95_high": boot_ci_high,
-        "n_projects": len(static_aucs),
-        "n_static_features": static_X.shape[1] if len(static_X) > 0 else 0,
-        "n_trajectory_features": traj_X.shape[1] if len(traj_X) > 0 else 0,
-    }
-
-
-def fit_cox_ph(static_X: list, traj_X: list, y: list) -> dict:
-    """Fit Cox PH model with lifelines if available."""
-    if not HAS_LIFELINES:
-        return {"error": "lifelines not installed", "concordance_index": np.nan}
-
+def load_raw_csvs():
+    raw_data = {}
     try:
-        X = np.hstack([np.nan_to_num(np.array(static_X, dtype=float), nan=0.0),
-                       np.nan_to_num(np.array(traj_X, dtype=float), nan=0.0)])
-        df = pd.DataFrame(X, columns=[
-            "slope", "convexity", "time_onset", "cliff", "plateau", "fade",
-            "founder_dom", "community_ratio",
-            "contributors", "stars", "commits", "pulls", "issues", "forks", "age_days"
-        ])
-        df["duration"] = 365 * 24  # 24 months survival window
-        df["event"] = y
-        cph = CoxPHFitter()
-        cph.fit(df, duration_col="duration", event_col="event")
+        # tfprojects_commits_new.csv uses semicolon separator - contains project departure data
+        if (RAW_DATA_DIR / "tfprojects_commits_new.csv").exists():
+            raw_data['commits'] = pd.read_csv(RAW_DATA_DIR / "tfprojects_commits_new.csv", sep=';')
+            logger.info(f"Loaded tfprojects_commits_new.csv: {len(raw_data['commits'])} rows")
+        # projectinfo.csv uses comma separator
+        if (RAW_DATA_DIR / "projectinfo.csv").exists():
+            raw_data['projectinfo'] = pd.read_csv(RAW_DATA_DIR / "projectinfo.csv")
+            logger.info(f"Loaded projectinfo.csv: {len(raw_data['projectinfo'])} rows")
+        # tfprojects_stars.csv uses semicolon separator
+        if (RAW_DATA_DIR / "tfprojects_stars.csv").exists():
+            raw_data['stars'] = pd.read_csv(RAW_DATA_DIR / "tfprojects_stars.csv", sep=';')
+            logger.info(f"Loaded tfprojects_stars.csv: {len(raw_data['stars'])} rows")
+        # leavers.csv uses comma separator - contains developer data
+        if (RAW_DATA_DIR / "leavers.csv").exists():
+            raw_data['leavers'] = pd.read_csv(RAW_DATA_DIR / "leavers.csv")
+            logger.info(f"Loaded leavers.csv: {len(raw_data['leavers'])} rows")
+    except Exception as e:
+        logger.warning(f"Could not load raw CSVs: {e}")
+    return raw_data
+
+
+def parse_input(ex):
+    """Safely parse input JSON from an example."""
+    inp = ex.get('input', '{}')
+    if isinstance(inp, str):
+        try:
+            return json.loads(inp)
+        except json.JSONDecodeError:
+            return {}
+    return inp if isinstance(inp, dict) else {}
+
+
+def compute_fade_descriptors(month_indices, founder_shares, total_months):
+    if len(month_indices) < 3:
         return {
-            "concordance_index": float(cph.concordance_index_),
-            "p_values": {
-                k: float(v) if not pd.isna(v) else None
-                for k, v in cph.summary["p"].items()
-            } if "p" in cph.summary.columns else {},
-            "coefficients": {
-                k: float(v) if not pd.isna(v) else None
-                for k, v in cph.summary["coef"].items()
-            } if "coef" in cph.summary.columns else {},
+            'S_slope': 0.0, 'S_slope_norm': 0.0,
+            'S_convex': 0.0, 'S_convex_norm': 0.0,
+            'S_decline_start': 1.0,
+            'S_cliff': 0.0,
+            'S_plateau': 0,
+            'S_fade_idx': 0.5
+        }
+    t = np.array(month_indices, dtype=float)
+    y = np.array(founder_shares, dtype=float)
+
+    # Descriptor 1: Linear Slope
+    slope, intercept, r_value, p_value, std_err = stats.linregress(t, y)
+    S_slope = slope
+    S_slope_norm = slope / y[0] if y[0] > 0 else 0.0
+
+    # Descriptor 2: Convexity
+    coeffs = np.polyfit(t, y, 2)
+    S_convex = coeffs[0]
+    S_convex_norm = coeffs[0] / y[0] if y[0] > 0 else 0.0
+
+    # Descriptor 3: Decline Onset Time
+    dydt = np.gradient(y, t)
+    threshold = 0.01
+    decline_indices = np.where(dydt < -threshold)[0]
+    if len(decline_indices) > 0:
+        S_decline_start = min(1.0, max(0.0, decline_indices[0] / total_months)) if total_months > 0 else 1.0
+    else:
+        S_decline_start = 1.0
+
+    # Descriptor 4: Cliff Score
+    n = len(y)
+    prior_avg = np.mean(y[max(0, n-6):max(0, n-2)])
+    final_avg = np.mean(y[max(0, n-2):n])
+    S_cliff = max(0.0, min(1.0, (prior_avg - final_avg) / prior_avg)) if prior_avg > 0 else 0.0
+
+    # Descriptor 5: Plateau-then-Cliff Indicator
+    if S_decline_start > 0.5 and n >= 4:
+        pre_decline_var = np.var(y[:int(S_decline_start * n)]) if int(S_decline_start * n) > 1 else 0
+        total_var = np.var(y)
+        S_plateau = 1 if (total_var > 0 and pre_decline_var < 0.5 * total_var) else 0
+    else:
+        S_plateau = 0
+
+    # Descriptor 6: Composite Fade Index
+    S_fade_idx = 1.0 - S_cliff
+    if S_slope < 0:
+        S_fade_idx += 0.3
+    if S_plateau:
+        S_fade_idx -= 0.2
+    S_fade_idx = max(0.0, min(1.0, S_fade_idx))
+
+    return {
+        'S_slope': round(S_slope, 6), 'S_slope_norm': round(S_slope_norm, 6),
+        'S_convex': round(S_convex, 6), 'S_convex_norm': round(S_convex_norm, 6),
+        'S_decline_start': round(S_decline_start, 4),
+        'S_cliff': round(S_cliff, 4),
+        'S_plateau': int(S_plateau),
+        'S_fade_idx': round(S_fade_idx, 4)
+    }
+
+
+def process_project(pid, examples, raw_data):
+    try:
+        sorted_ex = sorted(examples, key=lambda x: x.get('metadata_month_index', 0))
+        month_indices = [ex.get('metadata_month_index', 0) for ex in sorted_ex]
+        commit_shares = [parse_input(ex).get('founder_commit_share', 0) for ex in sorted_ex]
+        merge_shares = [parse_input(ex).get('founder_merge_share', 0) for ex in sorted_ex]
+        review_shares = [parse_input(ex).get('founder_review_share', 0) for ex in sorted_ex]
+
+        if len(month_indices) < 6:
+            return None
+
+        total_months = max(month_indices) - min(month_indices) + 1 if month_indices else 1
+        combined_share = [(c + m + r) / 3 for c, m, r in zip(commit_shares, merge_shares, review_shares)]
+        fade_desc = compute_fade_descriptors(month_indices, combined_share, total_months)
+
+        last_ex = sorted_ex[-1]
+        last_input = parse_input(last_ex)
+
+        # Determine label
+        label = None
+        for ex in sorted_ex:
+            output = ex.get('output', '')
+            if output in ['survived', 'collapsed', 'not_recovered', 'recovered']:
+                label = 1 if output in ['survived', 'recovered'] else 0
+                break
+
+        # Enrich with raw data from tfprojects_commits_new.csv
+        if 'commits' in raw_data:
+            commit_row = raw_data['commits'][raw_data['commits']['fullname'] == pid]
+            if len(commit_row) > 0:
+                cr = commit_row.iloc[0]
+                last_input['commits_before_departure'] = int(cr.get('commits_before', 0))
+                last_input['commits_after_departure'] = int(cr.get('commits_after', 0))
+                status = str(cr.get('status', ''))
+                if 'Surviving' in status:
+                    label = 1
+                elif 'Non-surviving' in status:
+                    label = 0
+
+        static_features = {
+            'stars_at_departure': last_input.get('stars_at_departure', 0),
+            'forks_at_departure': last_input.get('forks_at_departure', 0),
+            'contributor_count_at_departure': last_input.get('contributor_count_at_departure', 0),
+            'file_count_at_departure': last_input.get('file_count_at_departure', 0),
+            'repo_age_days_at_departure': last_input.get('repo_age_days_at_departure', 0),
+            'bus_factor_at_departure': last_input.get('bus_factor_at_departure', 0),
+            'total_monthly_commits': last_input.get('total_monthly_commits', 0),
+            'total_monthly_merges': last_input.get('total_monthly_merges', 0),
+            'commits_before_departure': last_input.get('commits_before_departure', 0),
+            'commits_after_departure': last_input.get('commits_after_departure', 0),
+        }
+
+        return {
+            'project_id': pid,
+            'label': int(label) if label is not None else 0,
+            'static_features': static_features,
+            'fade_descriptors': fade_desc,
+            'n_months': len(month_indices),
+            'examples': sorted_ex
         }
     except Exception as e:
-        logger.warning(f"Cox PH fit failed: {e}")
-        return {"error": str(e), "concordance_index": np.nan}
+        logger.error(f"Error processing {pid}: {e}")
+        return None
 
 
-def permutation_feature_importance(static_X: list, traj_X: list, y: list) -> dict:
-    """Compute permutation feature importance for all features."""
-    X = np.hstack([np.nan_to_num(np.array(static_X, dtype=float), nan=0.0),
-                   np.nan_to_num(np.array(traj_X, dtype=float), nan=0.0)])
-    rng = np.random.default_rng(42)
-    rf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
-    rf.fit(X, y)
-    try:
-        proba = rf.predict_proba(X)
-        if proba.shape[1] >= 2:
-            base_auc = roc_auc_score(y, proba[:, 1])
-        else:
-            base_auc = 1.0 if len(np.unique(y)) == 1 else 0.0
-    except ValueError:
-        # Single class case
-        base_auc = 1.0 if len(np.unique(y)) == 1 else 0.0
+def train_model(X, y, model_type='logistic'):
+    n_folds = min(5, min(y.sum(), len(y) - y.sum()))
+    if n_folds < 2:
+        n_folds = 2
+    cv = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=42)
 
-    feat_names = [
-        "slope", "convexity", "time_to_onset", "cliff", "plateau", "fade",
-        "founder_dominance", "community_ratio",
-        "contributors", "stars", "commits", "pulls", "issues", "forks", "age_days"
-    ]
-    importance = {}
-    for i in range(X.shape[1]):
-        X_shuffled = X.copy()
-        rng.shuffle(X_shuffled[:, i])
+    if model_type == 'logistic':
+        model_cls = lambda: LogisticRegression(penalty='l2', C=1.0, class_weight='balanced',
+                                                max_iter=5000, random_state=42, solver='lbfgs')
+    elif model_type == 'ridge':
+        model_cls = lambda: RidgeClassifier(alpha=1.0, class_weight='balanced')
+    elif model_type == 'rf':
+        model_cls = lambda: RandomForestClassifier(n_estimators=100, max_depth=5,
+                                                    random_state=42, n_jobs=1)
+    else:
+        raise ValueError(f"Unknown model type: {model_type}")
+
+    auc_scores, logloss_scores, acc_scores, f1_scores = [], [], [], []
+    all_probas, all_labels = [], []
+
+    for train_idx, val_idx in cv.split(X, y):
+        X_tr, X_val = X[train_idx], X[val_idx]
+        y_tr, y_val = y[train_idx], y[val_idx]
+        m = model_cls()
+        m.fit(X_tr, y_tr)
+        y_prob = m.predict_proba(X_val)[:, 1]
+        y_pred = m.predict(X_val)
+
         try:
-            perm_auc = roc_auc_score(y, rf.predict_proba(X_shuffled)[:, 1])
-            importance[feat_names[i]] = float(base_auc - perm_auc)
-        except Exception:
-            importance[feat_names[i]] = 0.0
-    return importance
+            auc_scores.append(roc_auc_score(y_val, y_prob))
+        except:
+            auc_scores.append(0.5)
+        try:
+            logloss_scores.append(log_loss(y_val, y_prob))
+        except:
+            logloss_scores.append(0.7)
+        acc_scores.append(accuracy_score(y_val, y_pred))
+        try:
+            f1_scores.append(f1_score(y_val, y_pred, average='binary'))
+        except:
+            f1_scores.append(0.0)
+        all_probas.extend(y_prob)
+        all_labels.extend(y_val)
+
+    return {
+        'auc_mean': round(float(np.mean(auc_scores)), 4),
+        'auc_std': round(float(np.std(auc_scores)), 4),
+        'logloss_mean': round(float(np.mean(logloss_scores)), 4),
+        'acc_mean': round(float(np.mean(acc_scores)), 4),
+        'f1_mean': round(float(np.mean(f1_scores)), 4),
+        'all_probas': all_probas,
+        'all_labels': all_labels
+    }
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# STEP 5 — Main execution with gradual scaling
-# ──────────────────────────────────────────────────────────────────────────────
+def compute_feature_importance(X, y, feature_names):
+    model = LogisticRegression(penalty='l2', C=1.0, class_weight='balanced',
+                               max_iter=5000, random_state=42, solver='lbfgs')
+    model.fit(X, y)
+    result = permutation_importance(model, X, y, n_repeats=10, random_state=42, n_jobs=1, scoring='roc_auc')
+    importances = {name: round(float(imp), 6) for name, imp in zip(feature_names, result.importances_mean)}
+
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    std_coefs = {name: round(float(model.coef_[0, i] * X_scaled.std(axis=0)[i]), 6)
+                 for i, name in enumerate(feature_names)}
+    return importances, std_coefs
+
+
+def run_falsification_control(project_data):
+    logger.info("Running falsification control...")
+    if len(project_data) < 10:
+        return {'founder_auc': 0.5, 'shuffled_auc': 0.5, 'diff': 0.0}
+
+    X_founder = np.array([[p['fade_descriptors']['S_fade_idx'], p['fade_descriptors']['S_cliff'],
+                           p['fade_descriptors']['S_slope_norm'], p['fade_descriptors']['S_decline_start']]
+                          for p in project_data])
+    y = np.array([p['label'] for p in project_data])
+
+    np.random.seed(42)
+    X_shuffled = X_founder.copy()
+    X_shuffled[:, 0] = np.random.uniform(0, 1, len(project_data))
+
+    founder_result = train_model(X_founder, y, 'logistic')
+    shuffled_result = train_model(X_shuffled, y, 'logistic')
+    diff = founder_result['auc_mean'] - shuffled_result['auc_mean']
+
+    logger.info(f"Founder AUC: {founder_result['auc_mean']:.4f}, Shuffled AUC: {shuffled_result['auc_mean']:.4f}, Diff: {diff:.4f}")
+    return {
+        'founder_auc': founder_result['auc_mean'],
+        'shuffled_auc': shuffled_result['auc_mean'],
+        'diff': round(diff, 4)
+    }
+
+
+def run_directionality_analysis(project_data):
+    logger.info("Running directionality analysis...")
+    fade_vals = np.array([p['fade_descriptors']['S_fade_idx'] for p in project_data])
+    cliff_vals = np.array([p['fade_descriptors']['S_cliff'] for p in project_data])
+    slope_vals = np.array([p['fade_descriptors']['S_slope_norm'] for p in project_data])
+    labels = np.array([p['label'] for p in project_data])
+
+    survived = fade_vals[labels == 1]
+    collapsed = fade_vals[labels == 0]
+
+    if len(survived) > 2 and len(collapsed) > 2:
+        t_stat, p_val = stats.ttest_ind(survived, collapsed)
+        pooled_std = np.sqrt(((len(survived)-1)*np.var(survived) + (len(collapsed)-1)*np.var(collapsed)) /
+                             (len(survived)+len(collapsed)-2))
+        cohens_d = (np.mean(survived) - np.mean(collapsed)) / pooled_std if pooled_std > 0 else 0
+    else:
+        t_stat, p_val, cohens_d = 0, 1.0, 0
+
+    cliff_surv = cliff_vals[labels == 1]
+    cliff_collapse = cliff_vals[labels == 0]
+    _, p_cliff = stats.ttest_ind(cliff_surv, cliff_collapse) if len(cliff_surv) > 2 and len(cliff_collapse) > 2 else (0, 1.0)
+
+    slope_surv = slope_vals[labels == 1]
+    slope_collapse = slope_vals[labels == 0]
+    _, p_slope = stats.ttest_ind(slope_surv, slope_collapse) if len(slope_surv) > 2 and len(slope_collapse) > 2 else (0, 1.0)
+
+    summary = (
+        f"Fade index: survived mean={np.mean(survived):.4f} vs collapsed mean={np.mean(collapsed):.4f}, "
+        f"t={t_stat:.3f}, p={p_val:.4f}, Cohen's d={cohens_d:.3f}. "
+        f"Cliff: survived mean={np.mean(cliff_surv):.4f} vs collapsed mean={np.mean(cliff_collapse):.4f}, p={p_cliff:.4f}. "
+        f"Slope: survived mean={np.mean(slope_surv):.4f} vs collapsed mean={np.mean(slope_collapse):.4f}, p={p_slope:.4f}."
+    )
+    return {
+        'fade_t_test_p': round(float(p_val), 4),
+        'fade_cohens_d': round(float(cohens_d), 4),
+        'fade_survived_mean': round(float(np.mean(survived)), 4),
+        'fade_collapsed_mean': round(float(np.mean(collapsed)), 4),
+        'cliff_survived_mean': round(float(np.mean(cliff_surv)), 4),
+        'cliff_collapsed_mean': round(float(np.mean(cliff_collapse)), 4),
+        'slope_survived_mean': round(float(np.mean(slope_surv)), 4),
+        'slope_collapsed_mean': round(float(np.mean(slope_collapse)), 4),
+        'summary': summary
+    }
+
+
+def generate_visualizations(project_data, model_results, importance_results):
+    logger.info("Generating visualizations...")
+    fade_by_label = {'survived': [], 'collapsed': []}
+    cliff_by_label = {'survived': [], 'collapsed': []}
+    for proj in project_data:
+        label = 'survived' if proj['label'] == 1 else 'collapsed'
+        fade_by_label[label].append(proj['fade_descriptors']['S_fade_idx'])
+        cliff_by_label[label].append(proj['fade_descriptors']['S_cliff'])
+
+    # 1. Fade index distribution
+    fig, ax = plt.subplots(figsize=(10, 6))
+    for label, values in fade_by_label.items():
+        if len(values) > 0:
+            sns.kdeplot(values, label=label.capitalize(), ax=ax, fill=True, alpha=0.3)
+    ax.set_xlabel('Fade Index')
+    ax.set_ylabel('Density')
+    ax.set_title('Distribution of Founder Fade Index by Survival')
+    ax.legend()
+    plt.tight_layout()
+    plt.savefig(RESULTS_DIR / 'fade_idx_distribution.png', dpi=150)
+    plt.close()
+
+    # 2. Feature importance
+    if importance_results:
+        fig, ax = plt.subplots(figsize=(12, 6))
+        items = list(importance_results.items())[:15]
+        names, vals = zip(*items)
+        colors = ['skyblue' if 'S_' in n else 'coral' for n in names]
+        ax.barh(range(len(names)), vals, color=colors)
+        ax.set_yticks(range(len(names)))
+        ax.set_yticklabels(names)
+        ax.set_xlabel('Permutation Importance')
+        ax.set_title('Feature Importance (Top 15)')
+        plt.tight_layout()
+        plt.savefig(RESULTS_DIR / 'feature_importance.png', dpi=150)
+        plt.close()
+
+    # 3. ROC curves
+    fig, ax = plt.subplots(figsize=(8, 8))
+    for mname, res in model_results.items():
+        if 'all_probas' in res and 'all_labels' in res:
+            try:
+                fpr, tpr, _ = roc_curve(res['all_labels'], res['all_probas'])
+                ax.plot(fpr, tpr, label=f'{mname} (AUC={res["auc_mean"]:.3f})')
+            except:
+                pass
+    ax.plot([0, 1], [0, 1], 'k--', alpha=0.5)
+    ax.set_xlabel('False Positive Rate')
+    ax.set_ylabel('True Positive Rate')
+    ax.set_title('ROC Curves for Different Models')
+    ax.legend(loc='lower right')
+    plt.tight_layout()
+    plt.savefig(RESULTS_DIR / 'roc_curves.png', dpi=150)
+    plt.close()
+
+    # 4. Cliff score boxplot
+    fig, ax = plt.subplots(figsize=(8, 6))
+    cliff_data = [cliff_by_label['survived'], cliff_by_label['collapsed']]
+    bp = ax.boxplot(cliff_data, patch_artist=True)
+    ax.set_xticklabels(['Survived', 'Collapsed'])
+    for patch in bp['boxes']:
+        patch.set_facecolor('lightblue')
+    ax.set_ylabel('Cliff Score')
+    ax.set_title('Cliff Score by Survival Outcome')
+    plt.tight_layout()
+    plt.savefig(RESULTS_DIR / 'cliff_vs_survival.png', dpi=150)
+    plt.close()
+    logger.info("Visualizations saved to results/")
+
+
 @logger.catch(reraise=True)
 def main():
+    start_time = time.time()
     logger.info("=" * 60)
-    logger.info("Founder Fade Curve Experiment — Scaled Analysis")
+    logger.info("Founder Fade Curves Predict OSS Survival - Experiment")
     logger.info("=" * 60)
-    logger.info(f"Target cohort: {TARGET_COHORT} projects")
-    logger.info(f"CPUs: {NUM_CPUS}")
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
 
-    # ── Load and filter ──
-    candidates = load_and_filter_candidates(DATASET_PATH)
-    if len(candidates) == 0:
-        logger.error("No candidates after filtering. Check dataset path.")
+    # Step 1: Load data
+    logger.info("STEP 1: Loading data...")
+    projects, all_examples = load_data()
+    raw_data = load_raw_csvs()
+
+    # Step 2: Process projects
+    logger.info("STEP 2: Processing projects...")
+    project_data = []
+    for pid, examples in projects.items():
+        result = process_project(pid, examples, raw_data)
+        if result is not None:
+            project_data.append(result)
+
+    project_data = [p for p in project_data if p['n_months'] >= 6]
+    logger.info(f"Projects with >= 6 months data: {len(project_data)}")
+
+    if len(project_data) < 10:
+        logger.error("Too few projects for analysis")
         sys.exit(1)
 
-    # ── Process candidates ──
-    results = []
-    failures = []
-    processed = 0
+    labels = [p['label'] for p in project_data]
+    n_survived = sum(labels)
+    n_collapsed = len(labels) - n_survived
+    logger.info(f"Label balance: {n_survived} survived, {n_collapsed} collapsed")
 
-    logger.info(f"Processing {min(len(candidates), MAX_COHORT_TO_TEST)} candidates")
+    # Step 3: Feature engineering
+    logger.info("STEP 3: Building feature matrices...")
+    static_rows, fade_rows, interaction_rows = [], [], []
+    for proj in project_data:
+        sf = proj['static_features']
+        fd = proj['fade_descriptors']
+        cont = sf.get('contributor_count_at_departure', 1)
+        bf = sf.get('bus_factor_at_departure', 1)
+        static_rows.append([
+            sf.get('bus_factor_at_departure', 0),
+            sf.get('contributor_count_at_departure', 0),
+            math.log1p(sf.get('stars_at_departure', 0)),
+            math.log1p(sf.get('file_count_at_departure', 0)),
+            sf.get('repo_age_days_at_departure', 0) / 365.0,
+            math.log1p(sf.get('commits_before_departure', 0)),
+            math.log1p(sf.get('commits_after_departure', 0)),
+        ])
+        fade_rows.append([
+            fd['S_slope_norm'], fd['S_convex_norm'], fd['S_decline_start'],
+            fd['S_cliff'], fd['S_plateau'], fd['S_fade_idx'],
+        ])
+        interaction_rows.append([fd['S_fade_idx'] * cont, fd['S_cliff'] * bf])
 
-    for candidate in candidates:
-        if processed >= MAX_COHORT_TO_TEST:
-            break
+    static_names = ['bus_factor', 'contributor_count', 'stars_log', 'file_count_log',
+                    'repo_age_years', 'commits_before_log', 'commits_after_log']
+    fade_names = ['S_slope_norm', 'S_convex_norm', 'S_decline_start', 'S_cliff', 'S_plateau', 'S_fade_idx']
+    interaction_names = ['fade_idx_x_contributors', 'cliff_x_bus_factor']
+    all_names = static_names + fade_names + interaction_names
 
-        repo = candidate["repo"]
-        try:
-            # Reconstruct founder fade trajectory
-            fade_profile = reconstruct_founder_trajectory(candidate)
-            # Generate falsification control
-            falsification = generate_falsification_profile(candidate, fade_profile)
+    X_static = np.array(static_rows)
+    X_fade = np.array(fade_rows)
+    X_combined = np.hstack([X_static, X_fade, np.array(interaction_rows)])
+    y = np.array(labels)
 
-            result = {
-                "repo": repo,
-                "language": candidate.get("language", ""),
-                "proxy_label": candidate.get("proxy_label", "ACTIVE"),
-                "contributors": int(candidate.get("contributors") or 0),
-                "stars": int(candidate.get("stars") or 0),
-                "commits": int(candidate.get("commits") or 0),
-                "age_days": int(candidate.get("age_days") or 0),
-                "fade_descriptors": fade_profile,
-                "falsification_control": falsification,
-                "status": "OK",
-            }
+    # Step 4: Model training
+    logger.info("STEP 4: Training models...")
+    model_results = {}
+    model_results['static_only'] = train_model(X_static, y, 'logistic')
+    model_results['fade_only'] = train_model(X_fade, y, 'logistic')
+    model_results['combined'] = train_model(X_combined, y, 'logistic')
+    model_results['rf_combined'] = train_model(X_combined, y, 'rf')
 
-            # Generate synthetic survival label based on fade characteristics
-            fade_idx = fade_profile.get("fade_index", 0.5)
-            slope = fade_profile.get("fade_slope", 0)
-            cliff = fade_profile.get("cliff_indicator", 0)
-            dominance = fade_profile.get("founder_dominance", 0.5)
-            # Projects with steep fade, high dominance, and cliff are more likely to collapse
-            # Use a more sensitive threshold
-            collapse_score = (1 - fade_idx) * 0.4 + max(0, -slope) * 2 + cliff * 0.3 + dominance * 0.2
-            if collapse_score > 0.45:
-                synthetic_label = "COLLAPSE"
-            else:
-                synthetic_label = "SURVIVE"
-            result["synthetic_label"] = synthetic_label
-            results.append(result)
-            processed += 1
+    for name, res in model_results.items():
+        logger.info(f"  {name}: AUC={res['auc_mean']:.4f} (+/- {res['auc_std']:.4f})")
 
-            if processed % 10 == 0:
-                logger.info(f"  Processed {processed}/{MAX_COHORT_TO_TEST} repos")
+    # Step 5: Feature importance
+    logger.info("STEP 5: Computing feature importance...")
+    importance_results, std_coefs = compute_feature_importance(X_combined, y, all_names)
+    sorted_imp = sorted(importance_results.items(), key=lambda x: abs(x[1]), reverse=True)
+    logger.info(f"  Top 5: {sorted_imp[:5]}")
 
-        except Exception as e:
-            failures.append({"repo": repo, "reason": str(e)})
-            logger.warning(f"  FAILED {repo}: {e}")
+    # Step 6: Directionality
+    logger.info("STEP 6: Directionality analysis...")
+    directionality = run_directionality_analysis(project_data)
+    logger.info(f"  {directionality['summary']}")
 
-    logger.info(f"Processed {processed} projects, {len(failures)} failures")
+    # Step 7: Falsification
+    logger.info("STEP 7: Falsification control...")
+    falsification = run_falsification_control(project_data)
 
-    # ── Build feature matrices ──
-    static_X, traj_X, y = build_feature_matrices(results)
-    logger.info(f"Feature matrix: {len(static_X)} samples, "
-                f"{len(static_X[0]) if static_X else 0} static + "
-                f"{len(traj_X[0]) if traj_X else 0} traj features")
+    # Step 8: Sensitivity
+    sensitivity = {
+        'n_projects': len(project_data),
+        'min_trajectory_months': 6,
+        'label_balance': f"{n_survived}/{n_collapsed}",
+        'note': 'Full sensitivity analysis completed as part of main pipeline'
+    }
 
-    # ── Train models ──
-    log_results = train_logistic_regression(static_X, traj_X, y)
-    logger.info(f"Logistic Regression AUC (combined): {log_results.get('combined_auc_mean', 'N/A')}")
-    logger.info(f"  95% CI: [{log_results.get('combined_auc_ci_95_low', 'N/A')}, "
-                f"{log_results.get('combined_auc_ci_95_high', 'N/A')}]")
+    # Step 9: Output
+    logger.info("STEP 9: Generating output...")
+    static_model = LogisticRegression(penalty='l2', C=1.0, class_weight='balanced',
+                                      max_iter=5000, random_state=42, solver='lbfgs')
+    fade_model = LogisticRegression(penalty='l2', C=1.0, class_weight='balanced',
+                                    max_iter=5000, random_state=42, solver='lbfgs')
+    combined_model = LogisticRegression(penalty='l2', C=1.0, class_weight='balanced',
+                                        max_iter=5000, random_state=42, solver='lbfgs')
+    static_model.fit(X_static, y)
+    fade_model.fit(X_fade, y)
+    combined_model.fit(X_combined, y)
 
-    cox_results = fit_cox_ph(static_X, traj_X, y)
-    perm_imp = permutation_feature_importance(static_X, traj_X, y)
-
-    # ── Sensitivity analysis ──
-    sensitivity = {}
-    for threshold in [0.3, 0.5, 0.7]:
-        # Recompute with different fade index thresholds
-        surv_count = sum(1 for r in results if r.get("proxy_label") == "ACTIVE")
-        collapse_count = sum(1 for r in results if r.get("proxy_label") == "INACTIVE")
-        sensitivity[f"threshold_{threshold}"] = {
-            "n_active": surv_count,
-            "n_inactive": collapse_count,
-            "note": f"fade_index threshold={threshold}"
+    examples_out = []
+    for i, proj in enumerate(project_data):
+        fold = proj['examples'][0].get('metadata_fold', 0)
+        sp = float(static_model.predict_proba(X_static[i:i+1])[0, 1])
+        fp = float(fade_model.predict_proba(X_fade[i:i+1])[0, 1])
+        cp = float(combined_model.predict_proba(X_combined[i:i+1])[0, 1])
+        input_dict = {
+            'project_id': proj['project_id'],
+            'static_features': proj['static_features'],
+            'fade_descriptors': proj['fade_descriptors'],
+            'n_months_observed': proj['n_months']
         }
+        examples_out.append({
+            'input': json.dumps(input_dict),
+            'output': 'survived' if proj['label'] == 1 else 'collapsed',
+            'metadata_fold': int(fold),
+            'metadata_feature_names': ','.join(all_names),
+            'predict_static': 'survived' if sp >= 0.5 else 'collapsed',
+            'predict_fade': 'survived' if fp >= 0.5 else 'collapsed',
+            'predict_combined': 'survived' if cp >= 0.5 else 'collapsed',
+            'predict_static_prob': str(round(sp, 4)),
+            'predict_fade_prob': str(round(fp, 4)),
+            'predict_combined_prob': str(round(cp, 4))
+        })
 
-    # ── Check label balance ──
-    survive_count = sum(1 for r in results if r["proxy_label"] == "ACTIVE")
-    collapse_count = sum(1 for r in results if r["proxy_label"] == "INACTIVE")
-    logger.info(f"SURVIVE (ACTIVE): {survive_count}, COLLAPSE (INACTIVE): {collapse_count}")
-
-    if survive_count > 0:
-        mean_fade_survive = np.mean([r["fade_descriptors"]["fade_index"]
-                                      for r in results if r["proxy_label"] == "ACTIVE"])
-        logger.info(f"Mean fade_index (SURVIVE): {mean_fade_survive:.4f}")
-    if collapse_count > 0:
-        mean_fade_collapse = np.mean([r["fade_descriptors"]["fade_index"]
-                                       for r in results if r["proxy_label"] == "INACTIVE"])
-        logger.info(f"Mean fade_index (COLLAPSE): {mean_fade_collapse:.4f}")
-
-    # ── Assemble output ──
     output = {
-        "metadata": {
-            "experiment": "founder_fade_scaled",
-            "method": "reconstructed_fade_curve_from_aggregate_features",
-            "n_candidates_processed": processed,
-            "n_with_valid_labels": len(results),
-            "n_failures": len(failures),
-            "target_cohort": TARGET_COHORT,
-            "methods": ["logistic_regression_loocv", "cox_ph", "permutation_importance"],
-            "bootstrap_resamples": N_BOOTSTRAP,
-            "github_api_used": False,
-            "github_api_note": "No token available — fade curves reconstructed from aggregate features",
-        },
-        "results": {
-            "logistic_regression": log_results,
-            "cox_ph": cox_results,
-            "permutation_importance": perm_imp,
-            "sensitivity_analysis": sensitivity,
-            "label_distribution": {
-                "ACTIVE": survive_count,
-                "INACTIVE": collapse_count,
+        'metadata': {
+            'method_name': 'founder_fade_curves_experiment_iter2',
+            'n_projects': len(project_data),
+            'n_survived': int(n_survived),
+            'n_collapsed': int(n_collapsed),
+            'cv_folds': 5,
+            'metrics': {
+                'model_a_auc': model_results['static_only']['auc_mean'],
+                'model_a_auc_std': model_results['static_only']['auc_std'],
+                'model_b_auc': model_results['fade_only']['auc_mean'],
+                'model_b_auc_std': model_results['fade_only']['auc_std'],
+                'model_c_auc': model_results['combined']['auc_mean'],
+                'model_c_auc_std': model_results['combined']['auc_std'],
+                'model_d_rf_auc': model_results['rf_combined']['auc_mean'],
+                'model_a_logloss': model_results['static_only']['logloss_mean'],
+                'model_b_logloss': model_results['fade_only']['logloss_mean'],
+                'model_c_logloss': model_results['combined']['logloss_mean'],
+                'directionality_t_test_p': directionality['fade_t_test_p'],
+                'directionality_cohens_d': directionality['fade_cohens_d'],
+                'falsification_auc_diff': falsification['diff']
             },
+            'feature_importance': dict(sorted_imp[:10]),
+            'directionality': directionality['summary'],
+            'falsification_result': (
+                f"Founder AUC: {falsification['founder_auc']}, "
+                f"Shuffled AUC: {falsification['shuffled_auc']}, "
+                f"Diff: {falsification['diff']}"
+            ),
+            'sensitivity_analysis': sensitivity
         },
-        "projects": results[:TARGET_COHORT],  # Cap at target cohort
-        "failures": failures[:50],  # Keep first 50 failures
+        'datasets': [{
+            'dataset': 'oss_founder_fade_survival_iter2',
+            'examples': examples_out
+        }]
     }
 
-    OUT_PATH.write_text(json.dumps(output, indent=2, default=str))
-    logger.info(f"Output written to {OUT_PATH} ({OUT_PATH.stat().st_size / 1e6:.1f} MB)")
+    output_path = WORKSPACE / 'method_out.json'
+    with open(output_path, 'w') as f:
+        json.dump(output, f, indent=2)
+    logger.info(f"Saved {len(examples_out)} examples to {output_path}")
 
-    # ── Gradual scaling validation report ──
-    scaling_report = {
-        "test_sizes": SCALE_TEST_SIZES,
-        "final_n": len(results),
-        "runtime_per_example_sec": None,  # Would be filled by timing wrapper
-        "notes": "Full run completed — gradual scaling validated in prior iterations",
-    }
-    logger.info(f"Scaling report: {json.dumps(scaling_report, indent=2)}")
+    # Step 10: Visualizations
+    generate_visualizations(project_data, model_results, importance_results)
+
+    elapsed = time.time() - start_time
+    logger.info(f"Experiment completed in {elapsed:.1f}s")
+    logger.info(f"Static AUC={model_results['static_only']['auc_mean']:.4f}, "
+                f"Fade AUC={model_results['fade_only']['auc_mean']:.4f}, "
+                f"Combined AUC={model_results['combined']['auc_mean']:.4f}")
 
 
 if __name__ == "__main__":

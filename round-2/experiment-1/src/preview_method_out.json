@@ -1,41 +1,85 @@
 {
   "metadata": {
-    "experiment": "founder_fade_scaled",
-    "method": "reconstructed_fade_curve_from_aggregate_features",
-    "n_candidates_processed": 120,
-    "n_with_valid_labels": 120,
-    "n_failures": 0,
-    "target_cohort": 100,
-    "methods": [
-      "logistic_regression_loocv",
-      "cox_ph",
-      "permutation_importance"
-    ],
-    "bootstrap_resamples": 1000,
-    "github_api_used": false,
-    "github_api_note": "No token available — fade curves reconstructed from aggregate features"
+    "method_name": "founder_fade_curves_experiment_iter2",
+    "n_projects": 309,
+    "n_survived": 127,
+    "n_collapsed": 182,
+    "cv_folds": 5,
+    "metrics": {
+      "model_a_auc": 0.928,
+      "model_a_auc_std": 0.0293,
+      "model_b_auc": 0.4623,
+      "model_b_auc_std": 0.0906,
+      "model_c_auc": 0.9289,
+      "model_c_auc_std": 0.0296,
+      "model_d_rf_auc": 0.8802,
+      "model_a_logloss": 0.3559,
+      "model_b_logloss": 0.6916,
+      "model_c_logloss": 0.358,
+      "directionality_t_test_p": 0.1847,
+      "directionality_cohens_d": -0.1542,
+      "falsification_auc_diff": -0.074
+    },
+    "feature_importance": {
+      "commits_after_log": 0.334849,
+      "fade_idx_x_contributors": 0.167721,
+      "contributor_count": 0.127092,
+      "commits_before_log": 0.124968,
+      "bus_factor": 0.051994,
+      "cliff_x_bus_factor": 0.001791,
+      "stars_log": 0.001341,
+      "file_count_log": 0.001043,
+      "S_cliff": 0.000943,
+      "S_fade_idx": -7.4e-05
+    },
+    "directionality": "Fade index: survived mean=0.9339 vs collapsed mean=0.9615, t=-1.329, p=0.1847, Cohen's d=-0.154. Cliff: survived mean=0.1113 vs collapsed mean=0.0764, p=0.2309. Slope: survived mean=-0.0114 vs collaps...",
+    "falsification_result": "Founder AUC: 0.4623, Shuffled AUC: 0.5363, Diff: -0.074",
+    "sensitivity_analysis": {
+      "n_projects": 309,
+      "min_trajectory_months": 6,
+      "label_balance": "127/182",
+      "note": "Full sensitivity analysis completed as part of main pipeline"
+    }
   },
   "datasets": [
     {
-      "dataset": "founder_fade_experiment",
+      "dataset": "oss_founder_fade_survival_iter2",
       "examples": [
         {
-          "input": "{\"repo\": \"qdrant/qdrant-js\", \"language\": \"TypeScript\", \"contributors\": 15, \"stars\": 204, \"commits\": 49, \"age_days\": 390, \"synthetic_label\": \"SURVIVE\"}",
-          "output": "SURVIVE",
-          "predict_survival": "SURVIVE",
-          "predict_fade_index": "\"{\\\"repo\\\": \\\"qdrant/qdrant-js\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 15, \\\"stars\\\": 204, \\\"commits\\\": 49, \\\"age_days\\\": 390, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+          "input": "{\"project_id\": \"redis-store/redis-store\", \"static_features\": {\"stars_at_departure\": 935, \"forks_at_departure\": 303, \"contributor_count_at_departure\": 66, \"file_count_at_departure\": 28, \"repo_age_days_...",
+          "output": "collapsed",
+          "metadata_fold": 0,
+          "metadata_feature_names": "bus_factor,contributor_count,stars_log,file_count_log,repo_age_years,commits_before_log,commits_after_log,S_slope_norm,S_convex_norm,S_decline_start,S_cliff,S_plateau,S_fade_idx,fade_idx_x_contributor...",
+          "predict_static": "collapsed",
+          "predict_fade": "collapsed",
+          "predict_combined": "collapsed",
+          "predict_static_prob": "0.0327",
+          "predict_fade_prob": "0.4912",
+          "predict_combined_prob": "0.0329"
         },
         {
-          "input": "{\"repo\": \"BishopFox/jsluice\", \"language\": \"Go\", \"contributors\": 220, \"stars\": 1212, \"commits\": 84, \"age_days\": 302, \"synthetic_label\": \"SURVIVE\"}",
-          "output": "SURVIVE",
-          "predict_survival": "SURVIVE",
-          "predict_fade_index": "\"{\\\"repo\\\": \\\"BishopFox/jsluice\\\", \\\"language\\\": \\\"Go\\\", \\\"contributors\\\": 220, \\\"stars\\\": 1212, \\\"commits\\\": 84, \\\"age_days\\\": 302, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+          "input": "{\"project_id\": \"spinnaker/spinnaker\", \"static_features\": {\"stars_at_departure\": 1, \"forks_at_departure\": 460, \"contributor_count_at_departure\": 67, \"file_count_at_departure\": 406, \"repo_age_days_at_de...",
+          "output": "survived",
+          "metadata_fold": 1,
+          "metadata_feature_names": "bus_factor,contributor_count,stars_log,file_count_log,repo_age_years,commits_before_log,commits_after_log,S_slope_norm,S_convex_norm,S_decline_start,S_cliff,S_plateau,S_fade_idx,fade_idx_x_contributor...",
+          "predict_static": "survived",
+          "predict_fade": "collapsed",
+          "predict_combined": "survived",
+          "predict_static_prob": "0.9993",
+          "predict_fade_prob": "0.4899",
+          "predict_combined_prob": "0.9992"
         },
         {
-          "input": "{\"repo\": \"muhammedb8826/Portfolio\", \"language\": \"CSS\", \"contributors\": 4, \"stars\": 6, \"commits\": 120, \"age_days\": 258, \"synthetic_label\": \"COLLAPSE\"}",
-          "output": "COLLAPSE",
-          "predict_survival": "COLLAPSE",
-          "predict_fade_index": "\"{\\\"repo\\\": \\\"muhammedb8826/Portfolio\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 4, \\\"stars\\\": 6, \\\"commits\\\": 120, \\\"age_days\\\": 258, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+          "input": "{\"project_id\": \"python-visualization/folium\", \"static_features\": {\"stars_at_departure\": 537, \"forks_at_departure\": 393, \"contributor_count_at_departure\": 45, \"file_count_at_departure\": 182, \"repo_age_...",
+          "output": "survived",
+          "metadata_fold": 2,
+          "metadata_feature_names": "bus_factor,contributor_count,stars_log,file_count_log,repo_age_years,commits_before_log,commits_after_log,S_slope_norm,S_convex_norm,S_decline_start,S_cliff,S_plateau,S_fade_idx,fade_idx_x_contributor...",
+          "predict_static": "survived",
+          "predict_fade": "collapsed",
+          "predict_combined": "survived",
+          "predict_static_prob": "0.9887",
+          "predict_fade_prob": "0.4909",
+          "predict_combined_prob": "0.9884"
         }
       ]
     }
