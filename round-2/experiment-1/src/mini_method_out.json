@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "experiment": "founder_fade_scaled",
+    "method": "reconstructed_fade_curve_from_aggregate_features",
+    "n_candidates_processed": 120,
+    "n_with_valid_labels": 120,
+    "n_failures": 0,
+    "target_cohort": 100,
+    "methods": [
+      "logistic_regression_loocv",
+      "cox_ph",
+      "permutation_importance"
+    ],
+    "bootstrap_resamples": 1000,
+    "github_api_used": false,
+    "github_api_note": "No token available — fade curves reconstructed from aggregate features"
+  },
+  "datasets": [
+    {
+      "dataset": "founder_fade_experiment",
+      "examples": [
+        {
+          "input": "{\"repo\": \"qdrant/qdrant-js\", \"language\": \"TypeScript\", \"contributors\": 15, \"stars\": 204, \"commits\": 49, \"age_days\": 390, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"qdrant/qdrant-js\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 15, \\\"stars\\\": 204, \\\"commits\\\": 49, \\\"age_days\\\": 390, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"BishopFox/jsluice\", \"language\": \"Go\", \"contributors\": 220, \"stars\": 1212, \"commits\": 84, \"age_days\": 302, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"BishopFox/jsluice\\\", \\\"language\\\": \\\"Go\\\", \\\"contributors\\\": 220, \\\"stars\\\": 1212, \\\"commits\\\": 84, \\\"age_days\\\": 302, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"muhammedb8826/Portfolio\", \"language\": \"CSS\", \"contributors\": 4, \"stars\": 6, \"commits\": 120, \"age_days\": 258, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"muhammedb8826/Portfolio\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 4, \\\"stars\\\": 6, \\\"commits\\\": 120, \\\"age_days\\\": 258, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        }
+      ]
+    }
+  ]
+}

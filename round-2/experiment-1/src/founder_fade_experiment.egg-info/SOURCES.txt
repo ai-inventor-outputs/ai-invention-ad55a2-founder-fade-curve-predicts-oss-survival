@@ -1,0 +1,7 @@
+method.py
+pyproject.toml
+founder_fade_experiment.egg-info/PKG-INFO
+founder_fade_experiment.egg-info/SOURCES.txt
+founder_fade_experiment.egg-info/dependency_links.txt
+founder_fade_experiment.egg-info/requires.txt
+founder_fade_experiment.egg-info/top_level.txt

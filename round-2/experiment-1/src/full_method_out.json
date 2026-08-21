@@ -1,0 +1,625 @@
+{
+  "metadata": {
+    "experiment": "founder_fade_scaled",
+    "method": "reconstructed_fade_curve_from_aggregate_features",
+    "n_candidates_processed": 120,
+    "n_with_valid_labels": 120,
+    "n_failures": 0,
+    "target_cohort": 100,
+    "methods": [
+      "logistic_regression_loocv",
+      "cox_ph",
+      "permutation_importance"
+    ],
+    "bootstrap_resamples": 1000,
+    "github_api_used": false,
+    "github_api_note": "No token available — fade curves reconstructed from aggregate features"
+  },
+  "datasets": [
+    {
+      "dataset": "founder_fade_experiment",
+      "examples": [
+        {
+          "input": "{\"repo\": \"qdrant/qdrant-js\", \"language\": \"TypeScript\", \"contributors\": 15, \"stars\": 204, \"commits\": 49, \"age_days\": 390, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"qdrant/qdrant-js\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 15, \\\"stars\\\": 204, \\\"commits\\\": 49, \\\"age_days\\\": 390, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"BishopFox/jsluice\", \"language\": \"Go\", \"contributors\": 220, \"stars\": 1212, \"commits\": 84, \"age_days\": 302, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"BishopFox/jsluice\\\", \\\"language\\\": \\\"Go\\\", \\\"contributors\\\": 220, \\\"stars\\\": 1212, \\\"commits\\\": 84, \\\"age_days\\\": 302, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"muhammedb8826/Portfolio\", \"language\": \"CSS\", \"contributors\": 4, \"stars\": 6, \"commits\": 120, \"age_days\": 258, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"muhammedb8826/Portfolio\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 4, \\\"stars\\\": 6, \\\"commits\\\": 120, \\\"age_days\\\": 258, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Olanetsoft/article-idea-generator\", \"language\": \"TypeScript\", \"contributors\": 8, \"stars\": 197, \"commits\": 81, \"age_days\": 264, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Olanetsoft/article-idea-generator\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 8, \\\"stars\\\": 197, \\\"commits\\\": 81, \\\"age_days\\\": 264, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"belladoreai/llama-tokenizer-js\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 309, \"commits\": 36, \"age_days\": 319, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"belladoreai/llama-tokenizer-js\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 309, \\\"commits\\\": 36, \\\"age_days\\\": 319, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"betagouv/sillon\", \"language\": \"TypeScript\", \"contributors\": 18, \"stars\": 10, \"commits\": 90, \"age_days\": 323, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"betagouv/sillon\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 18, \\\"stars\\\": 10, \\\"commits\\\": 90, \\\"age_days\\\": 323, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"wrappid/native-web\", \"language\": \"JavaScript\", \"contributors\": 17, \"stars\": 10, \"commits\": 621, \"age_days\": 367, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"wrappid/native-web\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 17, \\\"stars\\\": 10, \\\"commits\\\": 621, \\\"age_days\\\": 367, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Kkwagh-Coders/interview-experience-server\", \"language\": \"TypeScript\", \"contributors\": 5, \"stars\": 5, \"commits\": 171, \"age_days\": 459, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Kkwagh-Coders/interview-experience-server\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 5, \\\"stars\\\": 5, \\\"commits\\\": 171, \\\"age_days\\\": 459, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"RARgames/4gaBoards\", \"language\": \"JavaScript\", \"contributors\": 41, \"stars\": 46, \"commits\": 778, \"age_days\": 491, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"RARgames/4gaBoards\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 41, \\\"stars\\\": 46, \\\"commits\\\": 778, \\\"age_days\\\": 491, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"QuivrHQ/quivr\", \"language\": \"Python\", \"contributors\": 113, \"stars\": 33341, \"commits\": 1755, \"age_days\": 376, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"QuivrHQ/quivr\\\", \\\"language\\\": \\\"Python\\\", \\\"contributors\\\": 113, \\\"stars\\\": 33341, \\\"commits\\\": 1755, \\\"age_days\\\": 376, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"TobiTRy/fui-fancyui\", \"language\": \"TypeScript\", \"contributors\": 3, \"stars\": 5, \"commits\": 990, \"age_days\": 467, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"TobiTRy/fui-fancyui\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 5, \\\"commits\\\": 990, \\\"age_days\\\": 467, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"paularmstrong/onerepo\", \"language\": \"TypeScript\", \"contributors\": 6, \"stars\": 114, \"commits\": 1128, \"age_days\": 454, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"paularmstrong/onerepo\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 6, \\\"stars\\\": 114, \\\"commits\\\": 1128, \\\"age_days\\\": 454, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"streamdal/streamdal\", \"language\": \"TypeScript\", \"contributors\": 11, \"stars\": 538, \"commits\": 4336, \"age_days\": 293, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"streamdal/streamdal\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 11, \\\"stars\\\": 538, \\\"commits\\\": 4336, \\\"age_days\\\": 293, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"deepgram-starters/prerecorded-node-starter\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 9, \"commits\": 42, \"age_days\": 317, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"deepgram-starters/prerecorded-node-starter\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 9, \\\"commits\\\": 42, \\\"age_days\\\": 317, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"mossland/mossland_disclosure_web\", \"language\": \"JavaScript\", \"contributors\": 10, \"stars\": 17, \"commits\": 134, \"age_days\": 499, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"mossland/mossland_disclosure_web\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 10, \\\"stars\\\": 17, \\\"commits\\\": 134, \\\"age_days\\\": 499, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"unrealtecellp/life\", \"language\": \"JavaScript\", \"contributors\": 4, \"stars\": 5, \"commits\": 830, \"age_days\": 409, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"unrealtecellp/life\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 5, \\\"commits\\\": 830, \\\"age_days\\\": 409, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"jicamargo/first-mobile-portfolio\", \"language\": \"CSS\", \"contributors\": 3, \"stars\": 7, \"commits\": 120, \"age_days\": 186, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"jicamargo/first-mobile-portfolio\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 3, \\\"stars\\\": 7, \\\"commits\\\": 120, \\\"age_days\\\": 186, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"AliShahSafdari/Portfolio\", \"language\": \"CSS\", \"contributors\": 4, \"stars\": 9, \"commits\": 92, \"age_days\": 218, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"AliShahSafdari/Portfolio\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 4, \\\"stars\\\": 9, \\\"commits\\\": 92, \\\"age_days\\\": 218, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"CanadaHonk/test262.fyi\", \"language\": \"JavaScript\", \"contributors\": 6, \"stars\": 42, \"commits\": 392, \"age_days\": 334, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"CanadaHonk/test262.fyi\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 6, \\\"stars\\\": 42, \\\"commits\\\": 392, \\\"age_days\\\": 334, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"selenite-cc/selenite-old\", \"language\": \"HTML\", \"contributors\": 4, \"stars\": 46, \"commits\": 388, \"age_days\": 246, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"selenite-cc/selenite-old\\\", \\\"language\\\": \\\"HTML\\\", \\\"contributors\\\": 4, \\\"stars\\\": 46, \\\"commits\\\": 388, \\\"age_days\\\": 246, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"shevernitskiy/amo\", \"language\": \"TypeScript\", \"contributors\": 4, \"stars\": 6, \"commits\": 146, \"age_days\": 357, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"shevernitskiy/amo\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 6, \\\"commits\\\": 146, \\\"age_days\\\": 357, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"paxo-phone/paxo-site\", \"language\": \"TypeScript\", \"contributors\": 10, \"stars\": 14, \"commits\": 286, \"age_days\": 290, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"paxo-phone/paxo-site\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 10, \\\"stars\\\": 14, \\\"commits\\\": 286, \\\"age_days\\\": 290, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"sandeepatel01/Mern-Stack-Development\", \"language\": \"HTML\", \"contributors\": 5, \"stars\": 12, \"commits\": 74, \"age_days\": 273, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"sandeepatel01/Mern-Stack-Development\\\", \\\"language\\\": \\\"HTML\\\", \\\"contributors\\\": 5, \\\"stars\\\": 12, \\\"commits\\\": 74, \\\"age_days\\\": 273, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"GataNina-Li/GataBotLite-MD\", \"language\": \"JavaScript\", \"contributors\": 25, \"stars\": 180, \"commits\": 6817, \"age_days\": 447, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"GataNina-Li/GataBotLite-MD\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 25, \\\"stars\\\": 180, \\\"commits\\\": 6817, \\\"age_days\\\": 447, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"googlemaps/extended-component-library\", \"language\": \"TypeScript\", \"contributors\": 17, \"stars\": 98, \"commits\": 192, \"age_days\": 378, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"googlemaps/extended-component-library\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 17, \\\"stars\\\": 98, \\\"commits\\\": 192, \\\"age_days\\\": 378, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"gssbotwa/Gssbotwa2\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 105, \"commits\": 2524, \"age_days\": 228, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"gssbotwa/Gssbotwa2\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 105, \\\"commits\\\": 2524, \\\"age_days\\\": 228, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"MouS0926/SARTHI-TRAVEL-Tourist-Package-Booking-Website\", \"language\": \"HTML\", \"contributors\": 4, \"stars\": 5, \"commits\": 92, \"age_days\": 192, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"MouS0926/SARTHI-TRAVEL-Tourist-Package-Booking-Website\\\", \\\"language\\\": \\\"HTML\\\", \\\"contributors\\\": 4, \\\"stars\\\": 5, \\\"commits\\\": 92, \\\"age_days\\\": 192, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"e2b-dev/e2b-cookbook\", \"language\": \"TypeScript\", \"contributors\": 8, \"stars\": 279, \"commits\": 263, \"age_days\": 236, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"e2b-dev/e2b-cookbook\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 8, \\\"stars\\\": 279, \\\"commits\\\": 263, \\\"age_days\\\": 236, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Silverethical/silverBox\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 8, \"commits\": 822, \"age_days\": 204, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Silverethical/silverBox\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 8, \\\"commits\\\": 822, \\\"age_days\\\": 204, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"code-architects/frontend-resources\", \"language\": \"JavaScript\", \"contributors\": 6, \"stars\": 5, \"commits\": 54, \"age_days\": 268, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"code-architects/frontend-resources\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 6, \\\"stars\\\": 5, \\\"commits\\\": 54, \\\"age_days\\\": 268, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"anbehindY/portfolio\", \"language\": \"CSS\", \"contributors\": 6, \"stars\": 5, \"commits\": 216, \"age_days\": 454, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"anbehindY/portfolio\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 6, \\\"stars\\\": 5, \\\"commits\\\": 216, \\\"age_days\\\": 454, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Aiko-IT-Systems/rmmv-core\", \"language\": \"JavaScript\", \"contributors\": 16, \"stars\": 5, \"commits\": 42, \"age_days\": 324, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Aiko-IT-Systems/rmmv-core\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 16, \\\"stars\\\": 5, \\\"commits\\\": 42, \\\"age_days\\\": 324, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Steve0929/tiktok-tts\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 58, \"commits\": 81, \"age_days\": 324, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Steve0929/tiktok-tts\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 58, \\\"commits\\\": 81, \\\"age_days\\\": 324, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"alsiam/web-projects\", \"language\": \"HTML\", \"contributors\": 5, \"stars\": 79, \"commits\": 149, \"age_days\": 272, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"alsiam/web-projects\\\", \\\"language\\\": \\\"HTML\\\", \\\"contributors\\\": 5, \\\"stars\\\": 79, \\\"commits\\\": 149, \\\"age_days\\\": 272, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"tramvaijs/tramvai\", \"language\": \"TypeScript\", \"contributors\": 22, \"stars\": 65, \"commits\": 636, \"age_days\": 284, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"tramvaijs/tramvai\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 22, \\\"stars\\\": 65, \\\"commits\\\": 636, \\\"age_days\\\": 284, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"GautamPatil1/FYMaterials\", \"language\": \"HTML\", \"contributors\": 4, \"stars\": 8, \"commits\": 41, \"age_days\": 301, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"GautamPatil1/FYMaterials\\\", \\\"language\\\": \\\"HTML\\\", \\\"contributors\\\": 4, \\\"stars\\\": 8, \\\"commits\\\": 41, \\\"age_days\\\": 301, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"charleslukes/lodash-rust\", \"language\": \"Rust\", \"contributors\": 3, \"stars\": 6, \"commits\": 161, \"age_days\": 316, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"charleslukes/lodash-rust\\\", \\\"language\\\": \\\"Rust\\\", \\\"contributors\\\": 3, \\\"stars\\\": 6, \\\"commits\\\": 161, \\\"age_days\\\": 316, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"anand346/muzical\", \"language\": \"JavaScript\", \"contributors\": 7, \"stars\": 7, \"commits\": 67, \"age_days\": 249, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"anand346/muzical\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 7, \\\"stars\\\": 7, \\\"commits\\\": 67, \\\"age_days\\\": 249, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"OfekiAlm/WhatsApp-AI-Chatbot\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 12, \"commits\": 26, \"age_days\": 236, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"OfekiAlm/WhatsApp-AI-Chatbot\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 12, \\\"commits\\\": 26, \\\"age_days\\\": 236, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"SylarLong/iztro\", \"language\": \"TypeScript\", \"contributors\": 5, \"stars\": 1482, \"commits\": 528, \"age_days\": 291, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"SylarLong/iztro\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 5, \\\"stars\\\": 1482, \\\"commits\\\": 528, \\\"age_days\\\": 291, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"deiucanta/chatpad\", \"language\": \"TypeScript\", \"contributors\": 15, \"stars\": 1285, \"commits\": 87, \"age_days\": 325, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"deiucanta/chatpad\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 15, \\\"stars\\\": 1285, \\\"commits\\\": 87, \\\"age_days\\\": 325, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"biomejs/biome\", \"language\": \"Rust\", \"contributors\": 407, \"stars\": 11103, \"commits\": 6059, \"age_days\": 300, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"biomejs/biome\\\", \\\"language\\\": \\\"Rust\\\", \\\"contributors\\\": 407, \\\"stars\\\": 11103, \\\"commits\\\": 6059, \\\"age_days\\\": 300, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"adamlui/chatgpt-widescreen\", \"language\": \"JavaScript\", \"contributors\": 4, \"stars\": 104, \"commits\": 2282, \"age_days\": 420, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"adamlui/chatgpt-widescreen\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 104, \\\"commits\\\": 2282, \\\"age_days\\\": 420, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"wrappid/core\", \"language\": \"JavaScript\", \"contributors\": 18, \"stars\": 10, \"commits\": 1495, \"age_days\": 364, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"wrappid/core\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 18, \\\"stars\\\": 10, \\\"commits\\\": 1495, \\\"age_days\\\": 364, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"mondaycom/vibe-storybook-components\", \"language\": \"TypeScript\", \"contributors\": 27, \"stars\": 13, \"commits\": 172, \"age_days\": 285, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"mondaycom/vibe-storybook-components\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 27, \\\"stars\\\": 13, \\\"commits\\\": 172, \\\"age_days\\\": 285, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"ngoworldcommunity/NGOWorld-Backend\", \"language\": \"JavaScript\", \"contributors\": 21, \"stars\": 6, \"commits\": 87, \"age_days\": 252, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"ngoworldcommunity/NGOWorld-Backend\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 21, \\\"stars\\\": 6, \\\"commits\\\": 87, \\\"age_days\\\": 252, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Infisical/infisical-node\", \"language\": \"JavaScript\", \"contributors\": 8, \"stars\": 67, \"commits\": 66, \"age_days\": 312, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Infisical/infisical-node\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 8, \\\"stars\\\": 67, \\\"commits\\\": 66, \\\"age_days\\\": 312, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"blackcode1996/Tata-Cliq-clone\", \"language\": \"JavaScript\", \"contributors\": 7, \"stars\": 6, \"commits\": 160, \"age_days\": 375, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"blackcode1996/Tata-Cliq-clone\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 7, \\\"stars\\\": 6, \\\"commits\\\": 160, \\\"age_days\\\": 375, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"valcat/pomotorro\", \"language\": \"JavaScript\", \"contributors\": 4, \"stars\": 8, \"commits\": 176, \"age_days\": 284, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"valcat/pomotorro\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 8, \\\"commits\\\": 176, \\\"age_days\\\": 284, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"boywithkeyboard/cheetah\", \"language\": \"TypeScript\", \"contributors\": 5, \"stars\": 195, \"commits\": 437, \"age_days\": 310, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"boywithkeyboard/cheetah\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 5, \\\"stars\\\": 195, \\\"commits\\\": 437, \\\"age_days\\\": 310, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"LottieFiles/relottie\", \"language\": \"TypeScript\", \"contributors\": 15, \"stars\": 41, \"commits\": 152, \"age_days\": 325, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"LottieFiles/relottie\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 15, \\\"stars\\\": 41, \\\"commits\\\": 152, \\\"age_days\\\": 325, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"srajankumar/pullquest\", \"language\": \"JavaScript\", \"contributors\": 87, \"stars\": 15, \"commits\": 295, \"age_days\": 298, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"srajankumar/pullquest\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 87, \\\"stars\\\": 15, \\\"commits\\\": 295, \\\"age_days\\\": 298, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Doofenshmirtz-Evil-Incorp/Fuelish\", \"language\": \"JavaScript\", \"contributors\": 5, \"stars\": 23, \"commits\": 148, \"age_days\": 355, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Doofenshmirtz-Evil-Incorp/Fuelish\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 5, \\\"stars\\\": 23, \\\"commits\\\": 148, \\\"age_days\\\": 355, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"drshahizan/learn-php\", \"language\": \"JavaScript\", \"contributors\": 109, \"stars\": 179, \"commits\": 9321, \"age_days\": 435, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"drshahizan/learn-php\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 109, \\\"stars\\\": 179, \\\"commits\\\": 9321, \\\"age_days\\\": 435, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Skipperlla/rn-swiper-list\", \"language\": \"TypeScript\", \"contributors\": 4, \"stars\": 75, \"commits\": 56, \"age_days\": 485, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Skipperlla/rn-swiper-list\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 75, \\\"commits\\\": 56, \\\"age_days\\\": 485, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"blackmann/mangobase\", \"language\": \"TypeScript\", \"contributors\": 5, \"stars\": 76, \"commits\": 328, \"age_days\": 251, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"blackmann/mangobase\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 5, \\\"stars\\\": 76, \\\"commits\\\": 328, \\\"age_days\\\": 251, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"math-pixel/Masarus-Adventure\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 9, \"commits\": 209, \"age_days\": 420, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"math-pixel/Masarus-Adventure\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 9, \\\"commits\\\": 209, \\\"age_days\\\": 420, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"kejonaMC/MCProfile.io\", \"language\": \"JavaScript\", \"contributors\": 4, \"stars\": 7, \"commits\": 164, \"age_days\": 366, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"kejonaMC/MCProfile.io\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 7, \\\"commits\\\": 164, \\\"age_days\\\": 366, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"NikhilSharma1234/Mezzo\", \"language\": \"JavaScript\", \"contributors\": 4, \"stars\": 5, \"commits\": 387, \"age_days\": 470, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"NikhilSharma1234/Mezzo\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 5, \\\"commits\\\": 387, \\\"age_days\\\": 470, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"RBND-studio/flows-js\", \"language\": \"TypeScript\", \"contributors\": 3, \"stars\": 13, \"commits\": 192, \"age_days\": 243, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"RBND-studio/flows-js\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 13, \\\"commits\\\": 192, \\\"age_days\\\": 243, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"bellingcat/name-variant-search\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 20, \"commits\": 53, \"age_days\": 253, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"bellingcat/name-variant-search\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 20, \\\"commits\\\": 53, \\\"age_days\\\": 253, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"KudoAI/duckduckgpt\", \"language\": \"JavaScript\", \"contributors\": 4, \"stars\": 141, \"commits\": 1169, \"age_days\": 445, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"KudoAI/duckduckgpt\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 141, \\\"commits\\\": 1169, \\\"age_days\\\": 445, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"BitBrigade/Tim-E-Scape\", \"language\": \"JavaScript\", \"contributors\": 4, \"stars\": 5, \"commits\": 128, \"age_days\": 197, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"BitBrigade/Tim-E-Scape\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 5, \\\"commits\\\": 128, \\\"age_days\\\": 197, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"KudoAI/chatgpt.js\", \"language\": \"JavaScript\", \"contributors\": 18, \"stars\": 1792, \"commits\": 3771, \"age_days\": 431, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"KudoAI/chatgpt.js\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 18, \\\"stars\\\": 1792, \\\"commits\\\": 3771, \\\"age_days\\\": 431, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"abhijeetnishal/Password-Shield\", \"language\": \"JavaScript\", \"contributors\": 5, \"stars\": 9, \"commits\": 75, \"age_days\": 364, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"abhijeetnishal/Password-Shield\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 5, \\\"stars\\\": 9, \\\"commits\\\": 75, \\\"age_days\\\": 364, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Ashish-simpleCoder/classic-react-hooks\", \"language\": \"TypeScript\", \"contributors\": 4, \"stars\": 11, \"commits\": 134, \"age_days\": 274, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Ashish-simpleCoder/classic-react-hooks\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 11, \\\"commits\\\": 134, \\\"age_days\\\": 274, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"arpittyagi102/Humari-Dukan\", \"language\": \"JavaScript\", \"contributors\": 17, \"stars\": 18, \"commits\": 111, \"age_days\": 356, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"arpittyagi102/Humari-Dukan\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 17, \\\"stars\\\": 18, \\\"commits\\\": 111, \\\"age_days\\\": 356, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"MozamelJawad/My_Portfolio\", \"language\": \"HTML\", \"contributors\": 5, \"stars\": 8, \"commits\": 171, \"age_days\": 283, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"MozamelJawad/My_Portfolio\\\", \\\"language\\\": \\\"HTML\\\", \\\"contributors\\\": 5, \\\"stars\\\": 8, \\\"commits\\\": 171, \\\"age_days\\\": 283, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"akuse-app/Akuse\", \"language\": \"TypeScript\", \"contributors\": 5, \"stars\": 265, \"commits\": 518, \"age_days\": 330, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"akuse-app/Akuse\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 5, \\\"stars\\\": 265, \\\"commits\\\": 518, \\\"age_days\\\": 330, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"VishwaGauravIn/colpat\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 14, \"commits\": 107, \"age_days\": 208, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"VishwaGauravIn/colpat\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 14, \\\"commits\\\": 107, \\\"age_days\\\": 208, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"devvsakib/github-error-solve\", \"language\": \"JavaScript\", \"contributors\": 38, \"stars\": 53, \"commits\": 295, \"age_days\": 345, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"devvsakib/github-error-solve\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 38, \\\"stars\\\": 53, \\\"commits\\\": 295, \\\"age_days\\\": 345, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"webdiscus/html-bundler-webpack-plugin\", \"language\": \"JavaScript\", \"contributors\": 6, \"stars\": 113, \"commits\": 184, \"age_days\": 498, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"webdiscus/html-bundler-webpack-plugin\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 6, \\\"stars\\\": 113, \\\"commits\\\": 184, \\\"age_days\\\": 498, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"valehasadli/BlinkHub\", \"language\": \"TypeScript\", \"contributors\": 3, \"stars\": 16, \"commits\": 133, \"age_days\": 221, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"valehasadli/BlinkHub\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 16, \\\"commits\\\": 133, \\\"age_days\\\": 221, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"cevr/ftld\", \"language\": \"TypeScript\", \"contributors\": 4, \"stars\": 54, \"commits\": 500, \"age_days\": 394, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"cevr/ftld\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 54, \\\"commits\\\": 500, \\\"age_days\\\": 394, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"natainditama/auctionx\", \"language\": \"CSS\", \"contributors\": 3, \"stars\": 19, \"commits\": 119, \"age_days\": 411, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"natainditama/auctionx\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 3, \\\"stars\\\": 19, \\\"commits\\\": 119, \\\"age_days\\\": 411, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"NitBravoA92/portfolio-setup-and-mobile-first\", \"language\": \"CSS\", \"contributors\": 4, \"stars\": 14, \"commits\": 204, \"age_days\": 251, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"NitBravoA92/portfolio-setup-and-mobile-first\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 4, \\\"stars\\\": 14, \\\"commits\\\": 204, \\\"age_days\\\": 251, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Uri6/Genius-Enhancer\", \"language\": \"JavaScript\", \"contributors\": 6, \"stars\": 10, \"commits\": 342, \"age_days\": 296, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Uri6/Genius-Enhancer\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 6, \\\"stars\\\": 10, \\\"commits\\\": 342, \\\"age_days\\\": 296, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"NativeScript/ui-kit\", \"language\": \"JavaScript\", \"contributors\": 4, \"stars\": 6, \"commits\": 25, \"age_days\": 376, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"NativeScript/ui-kit\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 6, \\\"commits\\\": 25, \\\"age_days\\\": 376, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"shubhambhoyar077/portfolio\", \"language\": \"CSS\", \"contributors\": 3, \"stars\": 14, \"commits\": 176, \"age_days\": 204, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"shubhambhoyar077/portfolio\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 3, \\\"stars\\\": 14, \\\"commits\\\": 176, \\\"age_days\\\": 204, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Avinash905/HealthBooker\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 55, \"commits\": 49, \"age_days\": 387, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Avinash905/HealthBooker\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 55, \\\"commits\\\": 49, \\\"age_days\\\": 387, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"dipiash/eslint-plugin-nimbus-clean\", \"language\": \"JavaScript\", \"contributors\": 10, \"stars\": 9, \"commits\": 153, \"age_days\": 254, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"dipiash/eslint-plugin-nimbus-clean\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 10, \\\"stars\\\": 9, \\\"commits\\\": 153, \\\"age_days\\\": 254, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Muhammad0602/Portfolio-mobile-first\", \"language\": \"CSS\", \"contributors\": 4, \"stars\": 8, \"commits\": 156, \"age_days\": 232, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Muhammad0602/Portfolio-mobile-first\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 4, \\\"stars\\\": 8, \\\"commits\\\": 156, \\\"age_days\\\": 232, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"ViktorSvertoka/codewars\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 15, \"commits\": 349, \"age_days\": 280, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"ViktorSvertoka/codewars\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 15, \\\"commits\\\": 349, \\\"age_days\\\": 280, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"duolicious/duolicious-frontend\", \"language\": \"TypeScript\", \"contributors\": 4, \"stars\": 28, \"commits\": 178, \"age_days\": 360, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"duolicious/duolicious-frontend\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 4, \\\"stars\\\": 28, \\\"commits\\\": 178, \\\"age_days\\\": 360, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Kkwagh-Coders/interview-experience-client\", \"language\": \"TypeScript\", \"contributors\": 5, \"stars\": 7, \"commits\": 318, \"age_days\": 459, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Kkwagh-Coders/interview-experience-client\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 5, \\\"stars\\\": 7, \\\"commits\\\": 318, \\\"age_days\\\": 459, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"mariegrace31/portfolio_project\", \"language\": \"CSS\", \"contributors\": 4, \"stars\": 12, \"commits\": 131, \"age_days\": 267, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"mariegrace31/portfolio_project\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 4, \\\"stars\\\": 12, \\\"commits\\\": 131, \\\"age_days\\\": 267, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"TheBeyondGroup/shopify-rich-text-renderer\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 32, \"commits\": 45, \"age_days\": 419, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"TheBeyondGroup/shopify-rich-text-renderer\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 32, \\\"commits\\\": 45, \\\"age_days\\\": 419, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"dengxiaoning/cesium_dev_kit\", \"language\": \"JavaScript\", \"contributors\": 3, \"stars\": 132, \"commits\": 164, \"age_days\": 451, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"dengxiaoning/cesium_dev_kit\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 132, \\\"commits\\\": 164, \\\"age_days\\\": 451, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"hafiz1379/Portfolio\", \"language\": \"CSS\", \"contributors\": 3, \"stars\": 17, \"commits\": 135, \"age_days\": 325, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"hafiz1379/Portfolio\\\", \\\"language\\\": \\\"CSS\\\", \\\"contributors\\\": 3, \\\"stars\\\": 17, \\\"commits\\\": 135, \\\"age_days\\\": 325, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"pezzolabs/pezzo\", \"language\": \"TypeScript\", \"contributors\": 21, \"stars\": 1851, \"commits\": 258, \"age_days\": 396, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"pezzolabs/pezzo\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 21, \\\"stars\\\": 1851, \\\"commits\\\": 258, \\\"age_days\\\": 396, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"get-convex/convex-js\", \"language\": \"TypeScript\", \"contributors\": 10, \"stars\": 60, \"commits\": 63, \"age_days\": 385, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"get-convex/convex-js\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 10, \\\"stars\\\": 60, \\\"commits\\\": 63, \\\"age_days\\\": 385, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"dishamodi0910/APIVerse\", \"language\": \"JavaScript\", \"contributors\": 28, \"stars\": 41, \"commits\": 168, \"age_days\": 241, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"dishamodi0910/APIVerse\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 28, \\\"stars\\\": 41, \\\"commits\\\": 168, \\\"age_days\\\": 241, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"confluentinc/confluent-kafka-javascript\", \"language\": \"JavaScript\", \"contributors\": 535, \"stars\": 77, \"commits\": 673, \"age_days\": 196, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"confluentinc/confluent-kafka-javascript\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 535, \\\"stars\\\": 77, \\\"commits\\\": 673, \\\"age_days\\\": 196, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Trisha-tech/OnlineBookSales\", \"language\": \"JavaScript\", \"contributors\": 21, \"stars\": 37, \"commits\": 118, \"age_days\": 299, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Trisha-tech/OnlineBookSales\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 21, \\\"stars\\\": 37, \\\"commits\\\": 118, \\\"age_days\\\": 299, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"RimRaider639/Lint\", \"language\": \"JavaScript\", \"contributors\": 5, \"stars\": 5, \"commits\": 78, \"age_days\": 352, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"RimRaider639/Lint\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 5, \\\"stars\\\": 5, \\\"commits\\\": 78, \\\"age_days\\\": 352, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"oktadev/devdays-arcade-games\", \"language\": \"JavaScript\", \"contributors\": 10, \"stars\": 5, \"commits\": 50, \"age_days\": 263, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"oktadev/devdays-arcade-games\\\", \\\"language\\\": \\\"JavaScript\\\", \\\"contributors\\\": 10, \\\"stars\\\": 5, \\\"commits\\\": 50, \\\"age_days\\\": 263, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"codinasion/codinasion\", \"language\": \"TypeScript\", \"contributors\": 161, \"stars\": 51, \"commits\": 4679, \"age_days\": 354, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"codinasion/codinasion\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 161, \\\"stars\\\": 51, \\\"commits\\\": 4679, \\\"age_days\\\": 354, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"richardhbtz/soundcloud-rpc\", \"language\": \"TypeScript\", \"contributors\": 3, \"stars\": 33, \"commits\": 19, \"age_days\": 401, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"richardhbtz/soundcloud-rpc\\\", \\\"language\\\": \\\"TypeScript\\\", \\\"contributors\\\": 3, \\\"stars\\\": 33, \\\"commits\\\": 19, \\\"age_days\\\": 401, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"Modern-Modpacks/kjspkg\", \"language\": \"Python\", \"contributors\": 13, \"stars\": 8, \"commits\": 209, \"age_days\": 418, \"synthetic_label\": \"SURVIVE\"}",
+          "output": "SURVIVE",
+          "predict_survival": "SURVIVE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"Modern-Modpacks/kjspkg\\\", \\\"language\\\": \\\"Python\\\", \\\"contributors\\\": 13, \\\"stars\\\": 8, \\\"commits\\\": 209, \\\"age_days\\\": 418, \\\"synthetic_label\\\": \\\"SURVIVE\\\"}\""
+        },
+        {
+          "input": "{\"repo\": \"mostafizurhimself/admintoolkit-html\", \"language\": \"HTML\", \"contributors\": 7, \"stars\": 306, \"commits\": 880, \"age_days\": 406, \"synthetic_label\": \"COLLAPSE\"}",
+          "output": "COLLAPSE",
+          "predict_survival": "COLLAPSE",
+          "predict_fade_index": "\"{\\\"repo\\\": \\\"mostafizurhimself/admintoolkit-html\\\", \\\"language\\\": \\\"HTML\\\", \\\"contributors\\\": 7, \\\"stars\\\": 306, \\\"commits\\\": 880, \\\"age_days\\\": 406, \\\"synthetic_label\\\": \\\"COLLAPSE\\\"}\""
+        }
+      ]
+    }
+  ]
+}
