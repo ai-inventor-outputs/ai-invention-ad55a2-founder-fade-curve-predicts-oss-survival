@@ -1,0 +1,16 @@
+{
+  "type": "bar",
+  "title": "Model Performance Comparison",
+  "xlabel": "Model",
+  "ylabel": "AUC-ROC",
+  "aspect": "4:3",
+  "categories": ["Static (A)", "Fade (B)", "Combined (C)", "RF (D)"],
+  "series": [
+    {
+      "label": "AUC-ROC",
+      "values": [0.928, 0.462, 0.929, 0.880],
+      "errors": [0.029, 0.091, 0.030, 0.032],
+      "colors": ["blue", "red", "green", "gray"]
+    }
+  ]
+}

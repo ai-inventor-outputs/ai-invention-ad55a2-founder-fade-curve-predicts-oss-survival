@@ -1,0 +1,17 @@
+{
+  "references": [
+    {"title": "Truck Factor Developer Detachment framework", "author": "Avelino", "year": 2017},
+    {"title": "Replication of Truck Factor Developer Detachment on thousands of GitHub projects", "author": "Nourry", "year": 2018},
+    {"title": "Core developer turnover patterns in open-source software", "author": "Calefato", "year": 2018},
+    {"title": "Value-related discussions in GitHub issues predict contributor turnover", "author": "Jamieson", "year": 2019},
+    {"title": "Natural-language processing to GOVERNANCE.md files across repositories", "author": "Noori", "year": 2018},
+    {"title": "Impact of core contributor disengagement on pull-request throughput using difference-in-differences", "author": "Chen", "year": 2019},
+    {"title": "Hierarchical Transformer model over 24-month aggregate activity sequences for open-source project lifecycle classification", "author": "Karim", "year": 2020},
+    {"title": "Survival analysis with time-varying covariates for open-source project sustainability", "author": "Unknown", "year": 2019},
+    {"title": "Death spiral in open-source projects through pull-request workflow dynamics", "author": "Kaushik", "year": 2020},
+    {"title": "Mind in Society: The development of higher psychological processes", "author": "Vygotsky", "year": 1978},
+    {"title": "Scaffolding: A tutor provides structured support that is gradually withdrawn as the learner internalizes the skill", "author": "Bruner", "year": 1976},
+    {"title": "The role of tutoring in problem solving", "author": "Wood", "year": 1976},
+    {"title": "Measuring collaboration: The Degree of Authorship metric", "author": "Unknown", "year": 2000}
+  ]
+}
