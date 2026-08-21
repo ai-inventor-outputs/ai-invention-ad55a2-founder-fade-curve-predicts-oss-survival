@@ -1,19 +1,17 @@
 [project]
-name = "founder-fade-experiment"
-version = "1.0.0"
+name = "founder-fade-analysis"
+version = "0.1.0"
+description = "Founder Fade Curve Analysis for OSS Survival Prediction"
 requires-python = ">=3.12"
-description = "Founder Fade Curve — Scaled experiment on OSS projects"
 dependencies = [
-    "loguru==0.7.3",
-    "numpy==1.26.4",
-    "pandas==2.2.3",
+    "numpy==2.5.2",
+    "pandas==2.3.3",
     "scikit-learn==1.9.0",
-    "lifelines==0.30.3",
-    "python-dateutil==2.9.0.post0",
-    "scipy==1.17.1",
-    "matplotlib==3.11.1",
+    "scipy==1.13.1",
+    "lifelines==0.27.7",
+    "loguru==0.7.2",
+    "matplotlib==3.9.2",
 ]
 
-[build-system]
-requires = ["setuptools>=68.0"]
-build-backend = "setuptools.build_meta"
+[tool.uv]
+package = false
