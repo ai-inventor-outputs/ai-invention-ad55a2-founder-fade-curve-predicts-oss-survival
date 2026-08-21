@@ -1,0 +1,53 @@
+{
+  "datasets": [
+    {
+      "dataset": "oss_founder_departure",
+      "examples": [
+        {
+          "input": "{\"founder_peak_share\": 0.6695117048725285, \"bus_factor_at_departure\": 6, \"contributor_count_at_departure\": 23, \"project_age_months\": 94, \"star_count\": 1224, \"file_count\": 154, \"total_commits\": 8927, \"governance_model\": \"corporate-backed\", \"domain\": \"devtools\", \"primary_language\": \"Go\"}",
+          "output": "{\"survival_label\": \"survived\", \"survival_metric\": 0.164}",
+          "metadata_task_type": "binary_classification",
+          "metadata_n_classes": 2,
+          "metadata_row_index": 0,
+          "metadata_feature_names": [
+            "founder_peak_share",
+            "bus_factor_at_departure",
+            "contributor_count_at_departure",
+            "project_age_months",
+            "star_count",
+            "file_count",
+            "total_commits",
+            "governance_model",
+            "domain",
+            "primary_language"
+          ],
+          "metadata_project_id": "oss_project_000",
+          "metadata_founder_departure_month": 11,
+          "metadata_post_departure_commits": 1256
+        },
+        {
+          "input": "{\"founder_peak_share\": 0.5053722990117895, \"bus_factor_at_departure\": 3, \"contributor_count_at_departure\": 9, \"project_age_months\": 110, \"star_count\": 3167, \"file_count\": 171, \"total_commits\": 7668, \"governance_model\": \"community\", \"domain\": \"cloud\", \"primary_language\": \"Java\"}",
+          "output": "{\"survival_label\": \"collapsed\", \"survival_metric\": 0.002}",
+          "metadata_task_type": "binary_classification",
+          "metadata_n_classes": 2,
+          "metadata_row_index": 1,
+          "metadata_feature_names": [
+            "founder_peak_share",
+            "bus_factor_at_departure",
+            "contributor_count_at_departure",
+            "project_age_months",
+            "star_count",
+            "file_count",
+            "total_commits",
+            "governance_model",
+            "domain",
+            "primary_language"
+          ],
+          "metadata_project_id": "oss_project_001",
+          "metadata_founder_departure_month": 55,
+          "metadata_post_departure_commits": 12
+        }
+      ]
+    }
+  ]
+}
