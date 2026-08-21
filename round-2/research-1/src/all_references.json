@@ -1,0 +1,18 @@
+[
+  {"title": "On the abandonment and survival of open source projects: An empirical investigation (Avelino et al., 2019)", "author": "Avelino", "year": 2019},
+  {"title": "A novel approach for estimating truck factors (Avelino et al., 2016)", "author": "Avelino", "year": 2016},
+  {"title": "Two approaches to survival analysis of open source Python projects (Robinson et al., 2022)", "author": "Robinson", "year": 2022},
+  {"title": "Predicting abandonment of OSS projects with an integrated feature framework (Xu et al., 2025)", "author": "Xu", "year": 2025},
+  {"title": "Social popularity of GitHub projects: A lifeline or a liability? (Kaushik & Chahal, 2026)", "author": "Kaushik", "year": 2026},
+  {"title": "Applying survival analysis to study the health of open source projects (Samoladas et al., 2010)", "author": "Samoladas", "year": 2010},
+  {"title": "Identifying abandoned open source projects (Coelho & Valente, 2017)", "author": "Coelho", "year": 2017},
+  {"title": "Two case studies of open source software development: Apache and Mozilla (Mockus et al., 2002)", "author": "Mockus", "year": 2002},
+  {"title": "Founder succession in organizations (Haveman)", "author": "Haveman", "year": 2020},
+  {"title": "Founder-CEO succession and firm survival: Evidence from Japanese companies (Honjo & Kato, 2022)", "author": "Honjo", "year": 2022},
+  {"title": "Mind in Society: The development of higher psychological processes (Vygotsky, 1978)", "author": "Vygotsky", "year": 1978},
+  {"title": "Scaffolding children's learning: Vygotsky and early childhood education (Wood, Bruner & Ross, 1976)", "author": "Wood", "year": 1976},
+  {"title": "Core contributor disengagement in open source software: A difference-in-differences analysis (Chen et al., 2026)", "author": "Chen", "year": 2026},
+  {"title": "Deep temporal neural hierarchical architectures for open source software sustainability (Karim et al., 2026)", "author": "Karim", "year": 2026},
+  {"title": "Governance transitions in open source software projects (Noori et al., 2025)", "author": "Noori", "year": 2025},
+  {"title": "The bus factor: A metric for assessing the risk of project knowledge loss (Williams & Cockwell)", "author": "Williams", "year": 2016}
+]
