@@ -1,18 +1,18 @@
-# Literature Survey: Founder Fade & OSS Survival
+# Founder Fade Curve and OSS Survival Literature Survey
 
 `demo/` — Self-contained demo (Colab-ready notebook or markdown). Run without setup.  
 `src/` — Full source code, data, and outputs from the experiment execution.
 
 **Type:** research  
-**ID:** `art_XZccH0dIj4ss`
+**ID:** `art_f8OOJq5VnC0z`
 
 ## Layman Summary
 
-Comprehensive survey of existing methods for measuring OSS project survival after founder departure, identifying founders from git history, accessing large-scale GitHub data, and analyzing trajectory shapes.
+This research investigated what happens to open-source projects when their founders leave, examining how to measure founder dependency, predict project survival, and identify relevant data sources from GitHub.
 
 ## Full Summary
 
-This research synthesizes findings across four critical areas for evaluating the Founder Fade Curve hypothesis: (1) OSS project abandonment and survival measurement using the Truck Factor Developer Detachment (TFDD) framework from Avelino et al. (2019) and Nourry et al. (2024), (2) founder identification methods including Degree of Authorship (DOA) and GitHub API alias resolution, (3) large-scale GitHub data sources with GH Archive/BigQuery recommended as primary due to free access and comprehensive coverage, and (4) trajectory shape analysis techniques including Theil-Sen estimators, ruptures change-point detection, convexity analysis, and composite index construction. Key findings: 57% of OSS projects have truck factor of 1, 16% experience founder detachment, only 41% survive. The survey identifies significant research gaps for several 2025-2026 papers cited in the hypothesis, and recommends adopting the Avelino TFDD framework with 1-year inactivity threshold as the primary survival definition.
+This research surveyed literature on founder identification, project survival metrics, GitHub API capabilities, and prior work on temporal trajectories of contributor involvement in open source software. Key findings include: Truck Factor (TF) as a measure of project dependency on key developers; 16% of projects experience TF developers detachment (TFDD); 41% of projects survive TFDD by attracting new core contributors; survival is associated with younger projects at TFDD time; GitHub API provides commits, pull requests, and review comments endpoints with pagination and rate limits; founder identification can be approached through initial commit analysis or CODEOWNERS files; longitudinal bus factor analysis reveals contributor turnover risks. Recommendations for hypothesis testing include: using 6-month inactivity threshold for founder departure, defining survival as continued commits after departure, utilizing GitHub commits API with author tracking, and controlling for project age and initial team size as confounds.
 
 ## Output Files
 
