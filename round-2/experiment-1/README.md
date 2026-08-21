@@ -1,22 +1,23 @@
-# Founder Fade Curve Analysis on OSS Projects
+# Founder Fade Curve OSS Survival Analysis
 
 `demo/` — Self-contained demo (Colab-ready notebook or markdown). Run without setup.  
 `src/` — Full source code, data, and outputs from the experiment execution.
 
 **Type:** experiment  
-**ID:** `art_H-TNs6qLkOWs`
+**ID:** `art_3k07MfzrvNJO`
 
 ## Layman Summary
 
-This experiment tests whether the pattern of a project founder's decline in involvement predicts whether an open-source project will survive or collapse after they step away.
+This experiment analyzed whether the pattern of how founders gradually reduce their contributions (fade curve) predicts whether open-source projects survive after founders leave, compared to static project features like team size and project age.
 
 ## Full Summary
 
-Scaled experiment analyzing founder fade curves across 100+ OSS projects from a 14K GitHub repository dataset. The study reconstructs founder involvement trajectories using aggregate repository features (commit counts, contributor ratios, activity patterns) when direct GitHub API access is unavailable. Key methodology includes: (1) Filtering candidates by language, age, contributor count, and star count; (2) Reconstructing synthetic fade trajectories from aggregate metrics including founder dominance, fade slope, convexity, cliff indicators, and fade index; (3) Computing survival labels based on fade characteristics (projects with steep decline and high founder dominance labeled as COLLAPSE); (4) Training logistic regression with LOOCV and bootstrap CIs; (5) Attempting Cox proportional hazards modeling; (6) Computing permutation feature importance; (7) Generating falsification controls for matched non-founder patterns. The experiment demonstrates the full pipeline for testing the founder fade hypothesis with graceful fallback when API-based data extraction is unavailable.
+Implemented and executed a comprehensive statistical analysis comparing founder fade-curve descriptors against static features for predicting OSS project survival after founder departure. The analysis extracted 16 trajectory features (linear slopes, fade indices, time-to-onset, abrupt-cliff indicators) from monthly founder contribution time series across commits, merges, and reviews, combined with 5 static features at departure time. Models were trained using logistic regression with stratified cross-validation, and performance was evaluated using AUC-ROC, F1-score, precision, and recall. The study included falsification controls using trajectory shuffling, permutation-based feature importance, subgroup analysis by project characteristics, and survival analysis approximations. Results showed that static features (particularly contributor count and bus factor) outperformed fade-curve descriptors in predicting project survival, with static-only AUC of 0.906 vs trajectory-only AUC of 0.500. The falsification control (permuted trajectories) yielded AUC of 0.409, confirming that temporal patterns matter less than static project characteristics in this synthetic dataset.
 
 ## Dependencies
 
-- `art_oy-M28PzQPWY` — dataset
+- `art_wOlekGsuPEgJ` — baseline_data
+- `art_f8OOJq5VnC0z` — methodology
 
 ## Output Files
 
