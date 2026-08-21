@@ -1,9 +1,0 @@
-[project]
-name = "oss-founder-fade-survival-dataset"
-version = "1.0.0"
-requires-python = ">=3.12"
-dependencies = [
-    "loguru==0.7.3",
-    "pandas==3.0.5",
-    "numpy==2.5.2",
-]
