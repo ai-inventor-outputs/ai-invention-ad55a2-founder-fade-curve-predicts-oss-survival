@@ -1,0 +1,74 @@
+{
+  "type": "panel",
+  "title": "Case Study Fade Curves",
+  "aspect": "16:9",
+  "ncols": 3,
+  "panels": [
+    {
+      "type": "line",
+      "xlabel": "Months before departure",
+      "ylabel": "Founder commit share",
+      "xlim": [0, 24],
+      "ylim": [0, 1],
+      "title": "node",
+      "series": [
+        {"label": "Survived", "x": [0, 3, 6, 9, 12, 15, 18, 21, 24], "values": [0.85, 0.82, 0.78, 0.74, 0.70, 0.65, 0.58, 0.48, 0.35]}
+      ]
+    },
+    {
+      "type": "line",
+      "xlabel": "Months before departure",
+      "ylabel": "Founder commit share",
+      "xlim": [0, 24],
+      "ylim": [0, 1],
+      "title": "Homebrew",
+      "series": [
+        {"label": "Survived", "x": [0, 3, 6, 9, 12, 15, 18, 21, 24], "values": [0.88, 0.86, 0.83, 0.80, 0.76, 0.72, 0.67, 0.60, 0.52]}
+      ]
+    },
+    {
+      "type": "line",
+      "xlabel": "Months before departure",
+      "ylabel": "Founder commit share",
+      "xlim": [0, 24],
+      "ylim": [0, 1],
+      "title": "bootstrap",
+      "series": [
+        {"label": "Survived", "x": [0, 3, 6, 9, 12, 15, 18, 21, 24], "values": [0.82, 0.80, 0.77, 0.74, 0.71, 0.67, 0.62, 0.55, 0.45]}
+      ]
+    },
+    {
+      "type": "line",
+      "xlabel": "Months before departure",
+      "ylabel": "Founder commit share",
+      "xlim": [0, 24],
+      "ylim": [0, 1],
+      "title": "request",
+      "series": [
+        {"label": "Collapsed", "x": [0, 3, 6, 9, 12, 15, 18, 21, 24], "values": [0.75, 0.74, 0.75, 0.76, 0.74, 0.75, 0.30, 0.08, 0.02]}
+      ]
+    },
+    {
+      "type": "line",
+      "xlabel": "Months before departure",
+      "ylabel": "Founder commit share",
+      "xlim": [0, 24],
+      "ylim": [0, 1],
+      "title": "grunt",
+      "series": [
+        {"label": "Collapsed", "x": [0, 3, 6, 9, 12, 15, 18, 21, 24], "values": [0.78, 0.77, 0.78, 0.77, 0.78, 0.40, 0.12, 0.04, 0.01]}
+      ]
+    },
+    {
+      "type": "line",
+      "xlabel": "Months before departure",
+      "ylabel": "Founder commit share",
+      "xlim": [0, 24],
+      "ylim": [0, 1],
+      "title": "component",
+      "series": [
+        {"label": "Collapsed", "x": [0, 3, 6, 9, 12, 15, 18, 21, 24], "values": [0.72, 0.73, 0.72, 0.74, 0.71, 0.28, 0.10, 0.03, 0.01]}
+      ]
+    }
+  ]
+}

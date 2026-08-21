@@ -1,0 +1,48 @@
+{
+  "type": "panel",
+  "panel_labels": true,
+  "title": "Model Performance Comparison",
+  "xlabel": "Model",
+  "aspect": "16:9",
+  "ncols": 1,
+  "panels": [
+    {
+      "type": "bar",
+      "ylabel": "AUC-ROC",
+      "categories": ["Static-only", "Shape-only", "Combined"],
+      "series": [
+        {
+          "label": "AUC",
+          "values": [0.857, 0.408, 0.898],
+          "errors": [
+            [0.556, 1.000],
+            [0.100, 0.750],
+            [0.667, 1.000]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "bar",
+      "ylabel": "Accuracy",
+      "categories": ["Static-only", "Shape-only", "Combined"],
+      "series": [
+        {
+          "label": "Accuracy",
+          "values": [0.857, 0.429, 0.786]
+        }
+      ]
+    },
+    {
+      "type": "diverging",
+      "xlabel": "NRI",
+      "categories": ["Shape + Static"],
+      "series": [
+        {
+          "label": "NRI",
+          "values": [-0.143]
+        }
+      ]
+    }
+  ]
+}

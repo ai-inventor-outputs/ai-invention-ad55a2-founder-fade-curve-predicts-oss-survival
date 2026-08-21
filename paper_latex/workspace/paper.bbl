@@ -1,0 +1,117 @@
+\begin{thebibliography}{14}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Wood et~al.(1976)Wood, Bruner, and Ross]{Wood1976}
+D.~Wood, J.~Bruner, and Gail~P. Ross.
+\newblock The role of tutoring in problem solving.
+\newblock \emph{Journal of Child Psychology and Psychiatry}, 17:\penalty0
+  89--100, 1976.
+\newblock \doi{10.1111/j.1469-7610.1976.tb00381.x}.
+
+\bibitem[Eluri et~al.(2021)Eluri, Mazzuchi, and Sarkani]{Eluri2021}
+Vijay~K. Eluri, T.~Mazzuchi, and S.~Sarkani.
+\newblock Predicting long-time contributors for {GitHub} projects using machine
+  learning.
+\newblock \emph{Information and Software Technology}, 138:\penalty0 106616,
+  2021.
+\newblock \doi{10.1016/j.infsof.2021.106616}.
+
+\bibitem[Yehudi et~al.(2023)Yehudi, Goble, and Jay]{Yehudi2023}
+Yo~Yehudi, Carole~A. Goble, and Caroline Jay.
+\newblock Individual context-free online community health indicators fail to
+  identify open source software sustainability.
+\newblock \emph{ArXiv}, abs/2309.12120, 2023.
+\newblock \doi{10.48550/arXiv.2309.12120}.
+
+\bibitem[Nourry et~al.(2024)Nourry, Kondo, Saito, Iimura, Ubayashi, and
+  Kamei]{Nourry2024}
+Olivier Nourry, Masanari Kondo, Shinobu Saito, Yukako Iimura, Naoyasu Ubayashi,
+  and Yasutaka Kamei.
+\newblock Myth: The loss of core developers is a critical issue for {OSS}
+  communities.
+\newblock \emph{ArXiv}, abs/2412.00313, 2024.
+\newblock \doi{10.48550/arXiv.2412.00313}.
+
+\bibitem[Avelino et~al.(2016)Avelino, Passos, Hora, and Valente]{Avelino2016}
+G.~Avelino, L.~Passos, Andr{\'e}~C. Hora, and M.~T. Valente.
+\newblock A novel approach for estimating truck factors.
+\newblock In \emph{2016 IEEE 24th International Conference on Program
+  Comprehension (ICPC)}, pages 1--10, 2016.
+\newblock \doi{10.1109/ICPC.2016.7503718}.
+
+\bibitem[Killick et~al.(2012)Killick, Fearnhead, and Eckley]{Killick2012}
+R.~Killick, P.~Fearnhead, and I.~A. Eckley.
+\newblock Optimal detection of changepoints with a linear computational cost.
+\newblock \emph{Journal of the American Statistical Association}, 107:\penalty0
+  1590--1598, 2012.
+\newblock \doi{10.1080/01621459.2012.687726}.
+
+\bibitem[Avelino et~al.(2019)Avelino, Constantinou, Valente, and
+  Serebrenik]{Avelino2019}
+G.~Avelino, Eleni Constantinou, M.~T. Valente, and A.~Serebrenik.
+\newblock On the abandonment and survival of open source projects: An empirical
+  investigation.
+\newblock In \emph{2019 ACM/IEEE International Symposium on Empirical Software
+  Engineering and Measurement (ESEM)}, pages 1--12, 2019.
+\newblock \doi{10.1109/ESEM.2019.8870181}.
+
+\bibitem[Kaushik and Chahal(2026)]{Kaushik2026}
+M.~Kaushik and K.~Chahal.
+\newblock The death spiral of open source projects: A post-mortem analysis of
+  pull request workflow dynamics.
+\newblock \emph{Journal of Systems and Software}, 240:\penalty0 112942, 2026.
+\newblock \doi{10.1016/j.jss.2026.112942}.
+
+\bibitem[Tamburri et~al.(2019)Tamburri, Palomba, and Kazman]{Tamburri2019}
+D.~Tamburri, Fabio Palomba, and R.~Kazman.
+\newblock Exploring community smells in open-source: An automated approach.
+\newblock \emph{IEEE Transactions on Software Engineering}, 47:\penalty0
+  630--652, 2019.
+\newblock \doi{10.1109/TSE.2019.2901490}.
+
+\bibitem[Vygotsky(1978)]{Vygotsky1978}
+L.~S. Vygotsky.
+\newblock \emph{Mind in society: The development of higher psychological
+  processes}.
+\newblock Harvard University Press, 1978.
+
+\bibitem[Oliveira et~al.(2026)Oliveira, Conte, Gerosa, and
+  Steinmacher]{Oliveira2026}
+Pedro Oliveira, Tayana Conte, M.~Gerosa, and Igor Steinmacher.
+\newblock Governance in practice: How open source projects define and document
+  roles.
+\newblock In \emph{Proceedings of the 2026 ACM/IEEE International Symposium on
+  Empirical Software Engineering and Measurement (ESEM)}, 2026.
+\newblock \doi{10.1145/3794860.3794911}.
+
+\bibitem[Calefato et~al.(2022)Calefato, Gerosa, Iaffaldano, Lanubile, and
+  Steinmacher]{Calefato2021}
+Fabio Calefato, M.~Gerosa, G.~Iaffaldano, F.~Lanubile, and I.~Steinmacher.
+\newblock Will you come back to contribute? investigating the inactivity of
+  {OSS} core developers in {GitHub}.
+\newblock \emph{Empirical Software Engineering}, 27:\penalty0 1--38, 2022.
+\newblock \doi{10.1007/s10664-021-10012-6}.
+
+\bibitem[Chengalur-Smith et~al.(2010)Chengalur-Smith, Sidorova, and
+  Daniel]{ChengalurSmith2010}
+I.~Chengalur-Smith, A.~Sidorova, and Sherae~L. Daniel.
+\newblock Sustainability of free/libre open source projects: A longitudinal
+  study.
+\newblock \emph{Journal of the Association for Information Systems},
+  11:\penalty0 705--737, 2010.
+\newblock \doi{10.17705/1jais.00244}.
+
+\bibitem[Steinmacher et~al.(2021)Steinmacher, Balali, Trinkenreich, Guizani,
+  Izquierdo-Cortazar, Zambrano, Gerosa, and Sarma]{Steinmacher2021}
+I.~Steinmacher, Sogol Balali, Bianca Trinkenreich, Mariam Guizani, Daniel
+  Izquierdo-Cortazar, Griselda G.~Cuevas Zambrano, M.~Gerosa, and A.~Sarma.
+\newblock Being a mentor in open source projects.
+\newblock \emph{Journal of Internet Services and Applications}, 12:\penalty0
+  23, 2021.
+\newblock \doi{10.1186/s13174-021-00140-z}.
+
+\end{thebibliography}
