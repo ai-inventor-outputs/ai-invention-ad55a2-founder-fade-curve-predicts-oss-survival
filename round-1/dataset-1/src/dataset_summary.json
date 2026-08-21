@@ -1,0 +1,9 @@
+{
+  "dataset_name": "severo/dataset-viewer-code-commits",
+  "description": "History of the dataset-viewer codebase commit messages",
+  "size_mb": 0.5,
+  "rows": 2275,
+  "features": ["hash", "authorName", "authorEmail", "date", "subject", "diff"],
+  "suitability": "Limited: contains commit metadata but lacks founder identification, time series of founder shares, and survival labels. Requires enrichment with founder detection and survival labeling to match the ideal dataset criteria.",
+  "next_steps": "Enrich dataset by mapping commits to founders (early contributors), compute monthly founder shares, and label survival based on post-departure activity."
+}
