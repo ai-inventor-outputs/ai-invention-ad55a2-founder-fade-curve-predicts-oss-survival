@@ -1,18 +1,18 @@
-# Literature Survey: Founder Fade & OSS Survival
+# Methodology Grounding for Founder Fade Research
 
 `demo/` — Self-contained demo (Colab-ready notebook or markdown). Run without setup.  
 `src/` — Full source code, data, and outputs from the experiment execution.
 
 **Type:** research  
-**ID:** `art_XZccH0dIj4ss`
+**ID:** `art_HAcyopB9o-Yr`
 
 ## Layman Summary
 
-Comprehensive survey of existing methods for measuring OSS project survival after founder departure, identifying founders from git history, accessing large-scale GitHub data, and analyzing trajectory shapes.
+A comprehensive research report establishing rigorous definitions and technical protocols for studying how open-source projects survive or collapse when their founders step away.
 
 ## Full Summary
 
-This research synthesizes findings across four critical areas for evaluating the Founder Fade Curve hypothesis: (1) OSS project abandonment and survival measurement using the Truck Factor Developer Detachment (TFDD) framework from Avelino et al. (2019) and Nourry et al. (2024), (2) founder identification methods including Degree of Authorship (DOA) and GitHub API alias resolution, (3) large-scale GitHub data sources with GH Archive/BigQuery recommended as primary due to free access and comprehensive coverage, and (4) trajectory shape analysis techniques including Theil-Sen estimators, ruptures change-point detection, convexity analysis, and composite index construction. Key findings: 57% of OSS projects have truck factor of 1, 16% experience founder detachment, only 41% survive. The survey identifies significant research gaps for several 2025-2026 papers cited in the hypothesis, and recommends adopting the Avelino TFDD framework with 1-year inactivity threshold as the primary survival definition.
+This research establishes the methodological foundation for studying founder involvement trajectories and OSS project survival. It synthesizes findings from the foundational Avelino et al. (2019) study on Truck Factor Developer Detachment (TFDD), its 2025 large-scale replication by Nourry et al., and practical GitHub data extraction protocols. Key findings: (1) TFDD occurs when ALL truck-factor developers abandon a project, with a 1-year inactivity threshold providing the best precision-improvement tradeoff; (2) Among 1,932 popular projects, 16% faced TFDD and 41% survived; among 36,464 projects of all sizes, 89.6% faced TFDD but only 27% survived — revealing that smaller projects are far more fragile; (3) Surviving projects tend to be younger at TFDD time, have more post-TFDD commits, and often attract a single new core developer (86% of survivals); (4) GitHub data extraction is feasible via REST/GraphQL APIs for commits, merges, and reviews, but GH Archive BigQuery lacks PullRequestReviewEvent data; (5) Founder identification should combine repository creation metadata with earliest sustained contribution patterns; (6) Recommended statistical models include Cox Proportional Hazards for time-to-survival analysis and logistic regression for binary survival outcomes, controlling for project age, star count, contributor diversity, and file count.
 
 ## Output Files
 
