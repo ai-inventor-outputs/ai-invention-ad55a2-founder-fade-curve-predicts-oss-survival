@@ -1,0 +1,15 @@
+{
+  "type": "bar",
+  "title": "Expected Post-Departure Activity Levels",
+  "xlabel": "Project Outcome",
+  "ylabel": "Post-Departure Activity Level (% of Pre-Departure Baseline)",
+  "aspect": "21:9",
+  "categories": [
+    "Surviving Projects",
+    "Collapsed Projects"
+  ],
+  "data": {
+    "Surviving Projects": {"value": 100, "error": 10, "color": "#4CAF50"},
+    "Collapsed Projects": {"value": 25, "error": 5, "color": "#F44336"}
+  }
+}

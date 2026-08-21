@@ -1,0 +1,86 @@
+\begin{thebibliography}{10}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Qiu et~al.(2019)Qiu, Nolte, Brown, Serebrenik, and
+  Vasilescu]{Wang2019}
+Huilian~Sophie Qiu, Alexander Nolte, Anita~R. Brown, Alexander Serebrenik, and
+  Bogdan Vasilescu.
+\newblock Going farther together: The impact of social capital on sustained
+  participation in open source.
+\newblock \emph{2019 IEEE/ACM 41st International Conference on Software
+  Engineering (ICSE)}, pages 688--699, 2019.
+\newblock \doi{10.1109/ICSE.2019.00078}.
+
+\bibitem[Wood et~al.(1976)Wood, Bruner, and Ross]{Wood1976}
+D.~Wood, J.~Bruner, and Gail~P. Ross.
+\newblock The role of tutoring in problem solving.
+\newblock \emph{Journal of child psychology and psychiatry, and allied
+  disciplines}, 17 2:\penalty0 89--100, 1976.
+\newblock \doi{10.1111/J.1469-7610.1976.TB00381.X}.
+
+\bibitem[Chen et~al.(2021)]{Chen2021}
+Wei Chen et~al.
+\newblock \emph{The Impact of Project Initiators on Open Source Software
+  Project Success}.
+\newblock IGI Global, 2021.
+\newblock \doi{10.4018/978-1-7998-9158-1.ch012}.
+
+\bibitem[Baker et~al.(2017)]{Baker2017}
+Randy Baker et~al.
+\newblock Promoting argumentation competence: Extending from first- to
+  second-order scaffolding through adaptive fading.
+\newblock \emph{Educational Psychology Review}, 29:\penalty0 617--639, 2017.
+\newblock \doi{10.1007/s10648-017-9400-z}.
+
+\bibitem[Valiev et~al.(2018)Valiev, Vasilescu, and Herbsleb]{Gousios2018}
+Marat Valiev, Bogdan Vasilescu, and J.~Herbsleb.
+\newblock Ecosystem-level determinants of sustained activity in open-source
+  projects: a case study of the pypi ecosystem.
+\newblock \emph{Proceedings of the 2018 26th ACM Joint Meeting on European
+  Software Engineering Conference and Symposium on the Foundations of Software
+  Engineering}, 2018.
+\newblock \doi{10.1145/3236024.3236062}.
+
+\bibitem[Hechtl et~al.(2026)Hechtl, Bock, Ramsauer, Mauerer, and
+  Apel]{Zhang2026}
+Christian Hechtl, Thomas Bock, Ralf Ramsauer, Wolfgang Mauerer, and Sven Apel.
+\newblock How developer coreness influences the patch-review process: A
+  mixed-method study.
+\newblock \emph{Automated Software Engineering}, 33, 2026.
+\newblock \doi{10.1007/s10515-026-00634-9}.
+
+\bibitem[Avelino et~al.(2019)Avelino, Constantinou, Valente, and
+  Serebrenik]{Avelino2019}
+G.~Avelino, Eleni Constantinou, M.~T. Valente, and A.~Serebrenik.
+\newblock On the abandonment and survival of open source projects: An empirical
+  investigation.
+\newblock \emph{2019 ACM/IEEE International Symposium on Empirical Software
+  Engineering and Measurement (ESEM)}, pages 1--12, 2019.
+\newblock \doi{10.1109/ESEM.2019.8870181}.
+
+\bibitem[Kaushik and Chahal(2026)]{Kaushik2026}
+M.~Kaushik and K.~Chahal.
+\newblock The death spiral of open source projects: A post-mortem analysis of
+  pull request workflow dynamics.
+\newblock \emph{J. Syst. Softw.}, 240:\penalty0 112942, 2026.
+\newblock \doi{10.1016/j.jss.2026.112942}.
+
+\bibitem[Vygotsky(1978)]{Vygotsky1978}
+Lev~S. Vygotsky.
+\newblock \emph{Mind in Society: The Development of Higher Psychological
+  Processes}.
+\newblock Harvard University Press, Cambridge, MA, 1978.
+
+\bibitem[Calefato et~al.(2021)Calefato, Gerosa, Iaffaldano, Lanubile, and
+  Steinmacher]{Kamei2022}
+Fabio Calefato, M.~Gerosa, G.~Iaffaldano, F.~Lanubile, and I.~Steinmacher.
+\newblock Will you come back to contribute? investigating the inactivity of oss
+  core developers in github.
+\newblock \emph{Empirical Software Engineering}, 27, 2021.
+\newblock \doi{10.1007/s10664-021-10012-6}.
+
+\end{thebibliography}
