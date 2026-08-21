@@ -1,0 +1,27 @@
+{
+  "datasets": [
+    {
+      "dataset": "founder_fade_curve_pilot",
+      "examples": [
+        {
+          "input": "Synthetic trajectory 0 (smooth_fade)",
+          "output": "{\"pattern\": \"smooth_fade\", \"fade_index\": 0.929482443722079, \"cliff_indicator\": 0.1863005354505118, \"slope\": -0.035931403028780125, \"r2_linear\": 0.9392973129410012, \"decline_duration_fraction\": 0.58333...",
+          "metadata_pattern": "smooth_fade",
+          "metadata_trajectory_index": "0"
+        },
+        {
+          "input": "Synthetic trajectory 1 (smooth_fade)",
+          "output": "{\"pattern\": \"smooth_fade\", \"fade_index\": 0.9573859975282857, \"cliff_indicator\": 0.19135186590959496, \"slope\": -0.0347828157993026, \"r2_linear\": 0.9397389940614302, \"decline_duration_fraction\": 0.58333...",
+          "metadata_pattern": "smooth_fade",
+          "metadata_trajectory_index": "1"
+        },
+        {
+          "input": "Synthetic trajectory 2 (smooth_fade)",
+          "output": "{\"pattern\": \"smooth_fade\", \"fade_index\": 0.9257497596324193, \"cliff_indicator\": 0.2438051950555279, \"slope\": -0.035225012322837056, \"r2_linear\": 0.9414560084910495, \"decline_duration_fraction\": 0.5833...",
+          "metadata_pattern": "smooth_fade",
+          "metadata_trajectory_index": "2"
+        }
+      ]
+    }
+  ]
+}
