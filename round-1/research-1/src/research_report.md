@@ -1,189 +1,165 @@
-# Methodology Grounding for Founder Fade Research
+# Founder Fade Methodology for OSS Survival
 
 ## Summary
 
-This research establishes the methodological foundation for studying founder involvement trajectories and OSS project survival. It synthesizes findings from the foundational Avelino et al. (2019) study on Truck Factor Developer Detachment (TFDD), its 2025 large-scale replication by Nourry et al., and practical GitHub data extraction protocols. Key findings: (1) TFDD occurs when ALL truck-factor developers abandon a project, with a 1-year inactivity threshold providing the best precision-improvement tradeoff; (2) Among 1,932 popular projects, 16% faced TFDD and 41% survived; among 36,464 projects of all sizes, 89.6% faced TFDD but only 27% survived — revealing that smaller projects are far more fragile; (3) Surviving projects tend to be younger at TFDD time, have more post-TFDD commits, and often attract a single new core developer (86% of survivals); (4) GitHub data extraction is feasible via REST/GraphQL APIs for commits, merges, and reviews, but GH Archive BigQuery lacks PullRequestReviewEvent data; (5) Founder identification should combine repository creation metadata with earliest sustained contribution patterns; (6) Recommended statistical models include Cox Proportional Hazards for time-to-survival analysis and logistic regression for binary survival outcomes, controlling for project age, star count, contributor diversity, and file count.
+This research establishes a rigorous methodology for studying how open-source projects respond when their founders step away. It synthesizes findings from 10+ academic sources across four phases: (1) Literature operationalization from Avelino et al. (2019) defining Truck-Factor-Developer Detachment (TFDD) and project survival; (2) Technical feasibility of extracting three-channel involvement trajectories (commits, merges, reviews) via GitHub Archive BigQuery and GraphQL API; (3) Founder identification protocols combining repository creator status with earliest TF developer status, plus a validated 1-year inactivity threshold for departure detection; and (4) Statistical modeling recommendations including Cox Proportional Hazards and Accelerated Failure Time models. Key findings: 16% of popular GitHub projects experience TFDD; 41% survive by attracting new core developers; the 1-year inactivity threshold achieves optimal precision (0.82); social popularity can paradoxically accelerate abandonment; and no prior study has modeled the SHAPE of founder departure (gradual fade vs. sudden stop) as a predictor—identifying a clear research gap for the scaffolding fade hypothesis. The output includes a complete methodology synthesis with cohort selection protocol, labeling schema, feature engineering pipeline, and analysis plan ready for empirical implementation.
 
 ## Research Findings
 
-## Methodology Grounding for Founder Fade Research: What Determines OSS Project Survival After Founder Departure?
+## What Determines Whether an Open-Source Project Survives Its Founder Stepping Away?
 
-### 1. DEFINING THE CORE PHENOMENON: Truck Factor Developer Detachment (TFDD)
+This research synthesizes methodology from 10+ academic sources to answer how we can reliably study founder departure and project survival in open-source software (OSS).
 
-The foundational concept for studying founder departure in open-source projects is **Truck Factor Developer Detachment (TFDD)**, introduced and operationalized by Avelino, Constantinou, Valente, and Serebrenik (2019) [1]. The **Truck Factor (TF)** is defined as the minimal number of developers whose departure would put a project in serious trouble [1, 2]. TF is computed using the **Degree of Authorship (DOA)** metric: for each file, a developer's expertise is measured by whether they created the file and how many changes they made relative to others. The TF set comprises the minimal group of developers who are main authors (highest DOA) of at least 50% of the project's files [1].
+### 1. Defining Founder Departure and Project Survival [1, 2]
 
-**TFDD occurs when ALL TF developers abandon the project simultaneously** [1]. A developer is considered to have abandoned a project if their last commit occurred at least one year before the most recent repository commit [1]. This one-year threshold was selected from a sensitivity analysis comparing five thresholds (3 months, 6 months, 1 year, 1.5 years, 2 years), where the 1-year threshold achieved the highest harmonic mean of precision (82%) and improvement (55%) over the 6-month threshold [1].
+The foundational framework comes from Avelino et al. (2019), who introduced **Truck-Factor-Developer Detachment (TFDD)**: the event when ALL key developers (the "truck factor" set) abandon a project simultaneously [1]. A project is defined as **surviving** if it attracts at least one NEW truck-factor developer after the detachment, transitioning from an "Inactive" to "Active" state [1].
 
-A project is classified as **surviving** if, after a TFDD event, it attracts at least one new TF developer who assumes maintenance — transitioning the project from an "Inactive" state back to "Active" [1].
+**Key empirical findings from 1,932 popular GitHub projects:**
+- 16% of projects (315) experienced TFDD [1]
+- 41% of those (128 projects) survived by attracting new core developers [1]
+- 86% of survivals involved exactly ONE new TF developer [1]
+- 64% of survivals occurred within the first year after TFDD; only 2% after four years [1]
+- 52% survived via old contributors returning; 41% via entirely new contributors [1]
 
-### 2. EMPIRICAL LANDSCAPE: HOW COMMON IS ABANDONMENT AND SURVIVAL?
+### 2. The Inactivity Threshold: When Has a Founder Really Left? [1]
 
-**Avelino et al. (2019) — Popular Projects** [1]: In a dataset of 1,932 popular GitHub projects (top-500 most-starred across 6 languages), 315 projects (16%) experienced at least one TFDD. Of these, 128 projects (41%) survived by attracting new core developers. Key patterns:
-- 66% of TFDDs occurred in projects with TF=1 (single core developer) [1]
-- 59% of TFDDs happened in the first two years of development [1]
-- 86% of survivals involved attracting a single new TF developer [1]
-- 52% of new TF developers were existing contributors; 41% were newcomers [1]
-- Surviving projects had significantly more post-TFDD commits (median: 505 vs. 126) and higher percentage of post-TFDD commits (56% vs. 15%) than non-surviving projects [1]
-- Counterintuitively, surviving projects had FEWER developers (32 vs. 47), FEWER commits (384 vs. 694), and FEWER files (54 vs. 108) at the time of TFDD [1]
+Defining "departure" requires an inactivity threshold. Avelino et al. (2019) rigorously tested five thresholds: 3 months, 6 months, 1 year, 1.5 years, and 2 years [1]. The **1-year threshold** achieved the best tradeoff with precision of 0.82 and improvement of 0.55 over the 6-month threshold [1]. Shorter thresholds (3-6 months) produce excessive false positives by misclassifying temporarily inactive developers as departed [1].
 
-**Nourry et al. (2025) — Large-Scale Replication** [3]: Replicating Avelino's methodology on 36,464 projects (minimum 20 stars, 10 contributors, 2 years of history), they found dramatically different rates:
-- 89.65% of projects faced at least one TFDD (vs. 16% in Avelino) — the difference attributed to including smaller, less popular projects [3]
-- Only 27% of abandoned projects survived (vs. 41%) — smaller projects are less likely to attract new core developers [3]
-- 70% of TFDDs occurred within the first three years [3]
-- Most projects rely on a single core developer [3]
-- The only metric showing a clear difference between surviving and non-surviving projects was **project age at TFDD**: surviving projects were older (1,267 days vs. 830 days) [3]
+However, recent work by Xu et al. (2025) cautions that pure inactivity thresholds can misclassify projects that experience "revival" after periods of dormancy [4]. They propose a **dual-criteria approach**: (1) explicit GitHub "archived" status, AND (2) unambiguous abandonment statements in project documentation [4]. Their manual labeling of 1,174 keyword-matched repositories found that 65.6% of keyword matches were FALSE POSITIVES [4]. Earlier work by Coelho and Valente (2017) also explored keyword-based abandonment detection in project descriptions and found high false positive rates with simple keyword matching [9].
 
-**Contradiction and Resolution**: The disparity between Avelino's 16% and Nourry's 89.6% TFDD rate is explained by sample composition. Avelino studied only the top-500 most-starred projects per language — elite projects with large communities. Nourry included projects with as few as 20 stars, capturing the long tail of smaller projects where abandonment is the norm [3]. This suggests that **project popularity and community size are critical confounding variables**.
+### 3. Identifying Founders: Multiple Methods [1, 2, 4]
 
-### 3. WHAT PREDICTS SURVIVAL? EMPIRICAL FINDINGS
+No single standardized method exists, but four approaches emerge from the literature:
 
-The empirical literature identifies several factors associated with project survival after founder departure:
+1. **Repository creator**: The user who created the repo (simplest, but may miss technical founders in org-owned repos) [1]
+2. **Earliest sustained contributor**: Developer with earliest commits maintaining activity over a window (e.g., first 6 months) [2]
+3. **Truck Factor developer at inception**: Compute TF at early snapshots; TF developers at t=0 are founders [1, 2]
+4. **Push access/admin role**: Users with write permissions at project start (captures governance authority) [1]
 
-**Project characteristics** [1, 3]:
-- **Age at TFDD**: Older projects survive better (Nourry et al.: 1,267 vs. 830 days) [3]
-- **Post-TFDD activity**: Surviving projects show substantially more commits after TFDD [1]
-- **Size paradox**: Avelino found surviving projects were smaller at TFDD time, while Nourry found minor differences in size — suggesting the relationship may be non-linear or context-dependent [1, 3]
+**Recommended approach**: Combine repository creator with earliest TF developer. A founder is the repository creator IF they also appear as a TF developer in the first year; otherwise, the earliest TF developer(s) are founders [1, 2].
 
-**Human and social factors** [1]:
-- New maintainers were often already aware of abandonment risks when they started contributing [1]
-- Their own usage of the system was the primary motivation to take over [1]
-- Human and social factors played a key role in the transition [1]
-- Lack of time and difficulty obtaining push access were the main barriers [1]
+### 4. Data Extraction Pipeline [6, 7]
 
-**Developer turnover patterns** [4, 5]:
-- Ferreira et al. found larger projects and organization-owned projects showed higher core developer turnover rates [4]
-- Lin et al. found developers with higher codebase ownership are more likely to stay [5]
-- Calefato et al. found 45% of core developers completely disengage for at least one year, with 35-55% returning [6]
+Three complementary data sources enable comprehensive trajectory extraction:
 
-**Value-related discussions** [7]: Jamieson, Yamashita, and Foong (2024) showed that value-related discussions in GitHub issues can predict contributor turnover, suggesting that social dynamics and value alignment matter beyond pure code metrics [7].
+**GitHub Archive (GH Archive)** [6]: Provides bulk access to all public GitHub events since 2011 via Google BigQuery. Key event types include PushEvent (commits), PullRequestEvent (PR lifecycle), PullRequestReviewEvent (review submissions), and PullRequestReviewCommentEvent (review comments) [6]. Advantage: No per-repo rate limits; disadvantage: Public repos only.
 
-### 4. DATA EXTRACTION PIPELINE: TECHNICAL FEASIBILITY
+**GitHub GraphQL API** [7]: Offers 5,000 points per hour for nested queries combining commits, PRs, and reviews. The `PullRequest.mergedBy` field identifies merge performers, and `PullRequest.reviews` returns all review states (APPROVED, CHANGES_REQUESTED, COMMENTED) with authors [7].
 
-**Three-Channel Involvement Trajectories**:
+**GitHub REST API**: Rate-limited to 5,000 requests/hour with authentication; useful for specific endpoints not well-supported in GraphQL [7].
 
-1. **Commits**: Feasible via both REST API (`GET /repos/{owner}/{repo}/commits`) and GraphQL API (`repository.commits` connection). REST API returns 30 commits per page with pagination; GraphQL allows flexible filtering by author and date range. Rate limits: 5,000 requests/hour (REST, authenticated) or 5,000 points/hour (GraphQL) [8, 9].
+**Recommended pipeline**: Use GH Archive BigQuery for cohort selection and initial filtering, then GraphQL API for detailed per-project time-series extraction of commits, merges, and reviews per user per month [6, 7].
 
-2. **Merges**: Identifiable via REST API (`GET /repos/{owner}/{repo}/pulls?state=closed`) — the `merged_by` field identifies who performed the merge. GraphQL offers `repository.pullRequests` with `mergedBy` field. The `PullRequestEvent` in GH Archive contains merge information [10, 11].
+### 5. Statistical Models for Survival Analysis [3, 4, 5, 8]
 
-3. **Reviews**: REST API (`GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews`) returns review data per PR. GraphQL offers `pullRequest.reviews` connection. **Critical limitation**: GH Archive BigQuery does NOT collect `PullRequestReviewEvent` — only `PullRequestReviewCommentEvent` is available [12]. Reviews without comments are invisible in the archive. For comprehensive review data, the REST or GraphQL API must be used directly.
+Four modeling approaches are established in the literature:
 
-**Bulk Extraction Options**:
+**Cox Proportional Hazards** [3, 8]: Semi-parametric model estimating hazard ratios for each predictor. Used by Samoladas et al. (2010) and Robinson et al. (2022) [3, 8]. Limitation: Assumes proportional hazards (constant hazard ratios over time), which may be violated by time-varying founder activity features.
 
-- **GH Archive BigQuery**: Contains hourly GitHub event dumps since 2011. Event types include: PushEvent, PullRequestEvent, PullRequestReviewCommentEvent, IssueCommentEvent, CreateEvent, DeleteEvent, ForkEvent, ReleaseEvent, WatchEvent, and others [13]. Free tier allows 1 TB of queries per month. Best for commit and PR merge analysis, but NOT for comprehensive review data.
+**Accelerated Failure Time (AFT)** [4, 5]: Parametric model directly modeling time-to-event; handles non-proportional hazards. Xu et al. (2025) achieved a C-index of 0.846 using AFT with multi-perspective features [4]. Kaushik (2026) used AFT to analyze 73,195 repositories [5]. Best suited for time-varying founder activity trajectories.
 
-- **GitHub REST API**: 5,000 requests/hour for authenticated users. Suitable for per-repository extraction but requires careful rate-limit management for large cohorts.
+**Kaplan-Meier Estimator** [3]: Non-parametric survival curve estimation for visualizing survival differences between fade trajectory groups.
 
-- **GitHub GraphQL API**: 5,000 points/hour with complex scoring based on node counts. More efficient for complex queries but requires query optimization [8].
+**Bayesian Survival Analysis** [3]: Generates posterior survival functions; more robust when incorporating prior knowledge.
 
-**Recommendation**: Use GH Archive BigQuery for commit and merge history at scale, supplemented by targeted REST/GraphQL API calls for review data on the specific project cohort.
+### 6. Key Predictors of Survival [3, 4, 5, 8]
 
-### 5. FOUNDER AND DEPARTURE IDENTIFICATION PROTOCOLS
+Prior survival analysis studies identify these factors:
 
-**Founder Definition**:
-- **Primary method**: Repository creator (GitHub API: `repository.owner` and `repository.createdAt`) [14]
-- **Secondary method**: Earliest sustained contributor — the developer with the most commits in the first 6-12 months of project history [1]
-- **Pitfalls**: Multiple early contributors in team projects; organizational repositories where the "creator" is a bot or organization account; forks where the original founder is not the fork creator
+- **Team size**: Each new developer increases survival probability by 15.8% [8]
+- **Revision frequency**: High frequency (>1 commit/day) strongly predicts survival [3]
+- **Major releases**: Projects publishing major releases survive longer [3]
+- **Multi-hosting**: Projects on multiple platforms (GitHub + GitLab + PyPI) survive longer [3]
+- **Maintainer response latency**: Slow responses correlate with abandonment [4]
+- **Community participation balance**: Gini coefficient of contributions; imbalance predicts abandonment [4]
 
-**Departure Detection**:
-- **Standard threshold**: 1 year of inactivity (last commit > 1 year before most recent repo commit) [1]
-- **Alternative thresholds**: 3 months, 6 months (higher false positive rate), 1.5-2 years (higher false negative rate) [1]
-- **Recommendation**: Use 1-year threshold as primary, with sensitivity analysis at 6-month and 1.5-year thresholds
+**The social popularity paradox** [5]: Kaushik (2026) found that excessive social attention (stars, watchers, forks) can ACCELERATE abandonment when not matched by sufficient contributor count. High visibility creates "induced demand" on maintainers, leading to information overload and burnout [5]. This challenges the conventional assumption that popularity always helps.
 
-**Control Variables** (confounding factors to include in models) [1, 3, 4]:
-- Project age at time of TFDD
-- Total star count
-- Number of contributors
-- Number of files and commits
-- Programming language
-- Organizational vs. individual ownership
-- Contributor diversity (number of distinct contributors)
-- Historical activity patterns (commit frequency before TFDD)
+### 7. Research Gap: The Shape of Founder Departure
 
-### 6. STATISTICAL ANALYSIS FRAMEWORK
+Critically, **no prior study has modeled the SHAPE of founder departure** as a predictor. All existing work treats departure as a binary event (active vs. inactive) at a single threshold [1, 3, 4]. The "scaffolding fade hypothesis"—that gradual founder departure (slowly declining involvement over months) enables better project survival than sudden disappearance—has NOT been empirically tested. This contrasts with the foundational "onion model" of OSS contributor layers (core, active, peripheral) established by Mockus et al. (2002), which showed that small core teams sustain large projects [10].
 
-**Recommended Models**:
+### 8. Confounding Variables to Control [1, 3, 4, 5]
 
-1. **Cox Proportional Hazards**: For time-to-survival analysis — modeling the hazard of project death as a function of founder fade trajectory shape, controlling for covariates [15]
+Any model must control for: project age, total contributor count, star count, file count, programming language, revision frequency, maintainer response latency, and community participation balance (Gini coefficient) [1, 3, 4, 5].
 
-2. **Logistic Regression**: For binary survival outcome (survived vs. did not survive) with features derived from involvement trajectories [1]
+### Confidence Level and Limitations
 
-3. **Mann-Whitney U Test**: For comparing distributions of metrics between surviving and non-surviving projects (as used in Avelino et al.) [1]
+**High confidence** in: TFDD definition and survival operationalization (validated across 1,932 projects) [1]; 1-year threshold selection (sensitivity-analyzed) [1]; data extraction feasibility (GH Archive + GraphQL well-documented) [6, 7].
 
-4. **Survival curves (Kaplan-Meier)**: For visualizing survival probability over time post-TFDD
+**Moderate confidence** in: Founder identification methodology (no single standard exists; recommended hybrid approach is reasonable but unvalidated) [1, 2]; social popularity paradox (single large study, needs replication) [5].
 
-**Feature Engineering from Trajectories**:
-- Share of activity over time (monthly commits/merges/reviews as fraction of total)
-- Fade curve shape (linear decline, step function, gradual taper)
-- Time to last contribution
-- Whether departure was abrupt (step) or gradual (fade)
-- Presence of succession (new developer ramping up as founder ramps down)
+**Low confidence** in: The scaffolding fade hypothesis itself (novel, untested); optimal fade trajectory features (to be designed and validated).
 
-### 7. LIMITATIONS AND OPEN QUESTIONS
+### Cohort Selection Protocol
 
-- **TF algorithm limitations**: The DOA-based TF algorithm may not capture non-code contributions (documentation, issue triage, community management) that are critical to project survival [1]
-- **Alias resolution**: The GitHub API email-to-user mapping misses developers with multiple accounts; median alias rate is 11% [1]
-- **Review data gap**: GH Archive lacks PullRequestReviewEvent, limiting bulk analysis of code review patterns [12]
-- **Survival definition**: Current definition (new TF developer arrives) may miss projects that survive through distributed maintenance without a single new core developer
-- **Causal inference**: Observational studies cannot establish causality — projects that survive may have inherent characteristics that both enable survival and attract new developers
+1. Select top-N most-starred repos per language (following Avelino et al.: top-500 per language) [1]
+2. Filter: exclude forks, migrated repos, non-software repos, repos with <2 years history [1]
+3. Compute TF at yearly intervals using DOA algorithm [2]
+4. Identify TFDD events: all TF developers inactive for 1+ year [1]
+5. Classify: Surviving (new TF developer after TFDD) vs. Abandoned (no new TF developer) [1]
+6. Identify founders: repository creator + earliest TF developer [1, 2]
+7. Extract founder activity trajectories: monthly commits, merges, reviews from founder start to departure [6, 7]
 
-### 8. CONFIDENCE ASSESSMENT
+### Labeling Schema
 
-**High confidence**: TFDD definition, 1-year threshold selection, basic survival statistics from Avelino et al. and Nourry et al., GitHub API capabilities for commits and merges.
+- **Survival**: Project attracted new TF developer within observation window after TFDD [1]
+- **Collapse**: Project remained inactive after TFDD through end of observation window [1]
+- **Censoring**: Project still active at end of observation window (right-censored in survival analysis) [3]
+- **Abandonment alternative**: Explicit GitHub archived status OR abandonment statement in README [4]
 
-**Medium confidence**: The relationship between project size and survival (contradictory findings between studies), the predictive power of fade curve shape (not yet empirically tested), the adequacy of commit-based metrics for capturing full involvement.
+### Feature Engineering Pipeline
 
-**Low confidence**: The generalizability of findings beyond GitHub to other platforms, the long-term survival of projects beyond the observation window of existing studies.
+- **Raw events**: PushEvent, PullRequestEvent, PullRequestReviewEvent from GH Archive [6]
+- **Time series**: Monthly aggregation per user: commits, PRs merged, reviews submitted [7]
+- **Founder share**: Founder's activity / total project activity per month (0-1 ratio)
+- **Fade trajectory features**: Rate of decline, time to zero, fade shape (gradual linear, exponential decay, step function), pre-departure activity, post-departure gap
+- **Control features**: Project age, contributor count, star count, file count, language, revision frequency, maintainer response latency, community Gini coefficient [1, 3, 4, 5]
 
-### FOLLOW-UP QUESTIONS
+### Analysis Plan
 
-1. Can the **shape** of a founder's exit trajectory (abrupt departure vs. gradual fade vs. planned succession) predict survival better than static snapshots of project health at the time of departure?
+- **Primary**: Cox PH model with founder-fade features as time-varying covariates [3, 8]
+- **Secondary**: AFT model for non-proportional hazards [4, 5]
+- **Exploratory**: Kaplan-Meier curves stratified by fade shape (gradual vs. sudden) [3]
+- **Robustness**: Sensitivity analysis across departure thresholds (6mo, 1yr, 1.5yr) [1]
+- **Interpretability**: SHAP values for feature importance [4]
 
-2. How do **non-code contributions** (issue triage, documentation, community management, code review) factor into project survival when the founder departs — and can these be reliably measured from GitHub data?
+### Research Gaps Identified
 
-3. What role does **organizational backing** (corporate sponsorship, foundation support, grant funding) play in mediating the relationship between founder departure and project survival, and how can this be operationalized as a control variable?
-
+1. No prior study models the SHAPE of founder departure (gradual fade vs. sudden stop) as a predictor [1, 3, 4]
+2. No study combines commits, merges, AND reviews into a multi-channel involvement trajectory
+3. Most studies use static snapshots; few use time-varying survival analysis for founder activity [3, 4]
+4. The 'scaffolding fade hypothesis' (that gradual departure enables survival) has not been empirically tested
+5. Social popularity's dual role (lifeline vs. liability) needs more investigation in founder-departure context [5]
+6. Maintainer identification methods vary across studies; no standard protocol exists [1, 2, 4]
 
 ## Sources
 
-[1] [On the abandonment and survival of open source projects: An empirical investigation (Avelino, Constantinou, Valente, Serebrenik, 2019)](https://pure.tue.nl/ws/files/128584841/ESEM2019.pdf) — Foundational study defining TFDD, establishing 1-year abandonment threshold, analyzing 1,932 popular GitHub projects. Found 16% TFDD rate, 41% survival rate. Identified that surviving projects have more post-TFDD commits but fewer developers/files at TFDD time. Surveyed 33 new maintainers about motivations and barriers.
+[1] [On the abandonment and survival of open source projects: An empirical investigation (Avelino et al., 2019)](https://arxiv.org/abs/1906.08058) — Foundational paper defining TFDD, survival, and the 1-year inactivity threshold. Analyzed 1,932 GitHub projects; found 16% TFDD rate, 41% survival rate. Surveyed 33 new maintainers.
 
-[2] [On the abandonment and survival of open source projects: An empirical investigation (arXiv preprint)](https://arxiv.org/abs/1906.08058) — ArXiv preprint version of the same study, providing accessible full text and replication package reference.
+[2] [A novel approach for estimating truck factors (Avelino et al., 2016)](https://arxiv.org/abs/1604.06766) — Introduces the Degree of Authorship (DOA) metric for TF estimation. Validated against 133 GitHub projects and surveyed 67 developers. 65% of projects have TF <= 2.
 
-[3] [Abandonment and Resilience: Understanding Core Developer Turnover in Open-Source Software (Nourry et al., 2025)](https://www.jstage.jst.go.jp/article/transinf/E108.D/11/E108.D_2025EDL8005/_pdf/-char/en) — Large-scale replication on 36,464 projects finding 89.6% TFDD rate and 27% survival rate. Revealed that smaller projects are far more fragile. Found project age at TFDD is the key differentiator between surviving and non-surviving projects.
+[3] [Two approaches to survival analysis of open source Python projects (Robinson et al., 2022)](https://arxiv.org/abs/2203.08320) — Applied Cox PH and Bayesian survival analysis to 2,066 Python projects. Found team size, revision frequency, major releases, and multi-hosting predict survival.
 
-[4] [Will you come back to contribute? Investigating the inactivity of OSS core developers in GitHub (Calefato et al., 2021)](https://doi.org/10.1007/s10664-021-10012-6) — Found that 45% of core developers completely disengage for at least one year, with 35-55% returning. Validated abandonment detection methods with real developers.
+[4] [Predicting abandonment of OSS projects with an integrated feature framework (Xu et al., 2025)](https://arxiv.org/abs/2507.21678) — Constructed dataset of 115,466 repos with 57,733 confirmed abandonments. Dual-criteria abandonment detection. AFT model achieved C-index of 0.846. Multi-perspective features outperform surface metrics.
 
-[5] [Predicting open source contributor turnover from value-related discussions: An analysis of GitHub issues (Jamieson, Yamashita, Foong, 2024)](https://doi.org/10.1145/3597503.3623340) — Showed that value-related discussions in GitHub issues can predict contributor turnover, suggesting social dynamics matter beyond code metrics.
+[5] [Social popularity of GitHub projects: A lifeline or a liability? (Kaushik & Chahal, 2026)](https://arxiv.org/abs/2607.00435) — Analyzed 73,195 repos using AFT framework. Found human capital is strongest protective factor; excessive social popularity accelerates abandonment (paradox of accessibility).
 
-[6] [Exploring factors affecting developer abandonment of open source software projects (Avelino, Constantinou, 2022)](https://doi.org/10.1002/smr.2484) — Follow-up study investigating specific factors affecting developer abandonment, extending the 2019 work with deeper analysis of motivational and contextual factors.
+[6] [GH Archive - GitHub Event Archive](https://www.gharchive.org) — Public archive of all GitHub events since 2011, available via Google BigQuery. Key event types: PushEvent, PullRequestEvent, PullRequestReviewEvent.
 
-[7] [Rate limits and query limits for the GraphQL API (GitHub Documentation)](https://docs.github.com/en/graphql/overview/rate-limits-and-query-limits-for-the-graphql-api) — Documents GraphQL API rate limits (5,000 points/hour for users), point calculation methodology, and query optimization strategies essential for bulk data extraction.
+[7] [GitHub GraphQL API Documentation](https://docs.github.com/en/graphql) — GraphQL API with 5,000 points/hour limit. Supports nested queries for commits, PRs, reviews. PullRequest.mergedBy identifies merge performers.
 
-[8] [Rate limits for the REST API (GitHub Documentation)](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api) — Documents REST API rate limits (5,000 requests/hour authenticated) and strategies for managing rate limits during bulk data extraction.
+[8] [Applying survival analysis to study the health of open source projects (Samoladas et al., 2010)](https://doi.org/10.1109/ICSE.2010.5443544) — Early application of Cox PH to OSS survival. Found each new developer increases survival by 15.8%. Games/security domains have lowest survival.
 
-[9] [REST API endpoints for repository statistics (GitHub Documentation)](https://docs.github.com/en/rest/metrics/statistics) — Documents available REST API endpoints for fetching repository activity data including commits, pull requests, and contribution statistics.
+[9] [Identifying abandoned open source projects (Coelho & Valente, 2017)](https://doi.org/10.1109/SANER.2017.7884611) — Explored keyword-based abandonment detection in project descriptions. Found high false positive rates with simple keyword matching.
 
-[10] [Event types available on GHArchive](https://gist.github.com/jennynz/d8715f4db8eb562cf34efeac8785b8f1) — Comprehensive list of event types available in GH Archive BigQuery dataset, including PushEvent, PullRequestEvent, PullRequestReviewCommentEvent, and others.
-
-[11] [GH Archive — GitHub event archive on BigQuery](https://github.com/igrigorik/gharchive.org) — GH Archive project providing hourly GitHub event dumps since 2011, accessible via Google BigQuery for bulk analysis of GitHub activity patterns.
-
-[12] [PullRequestReviewEvent is not collected (GH Archive Issue #197)](https://github.com/igrigorik/gharchive.org/issues/197) — Documents the critical limitation that PullRequestReviewEvent is not collected in GH Archive — only PullRequestReviewCommentEvent is available, making reviews without comments invisible.
-
-[13] [Google BigQuery + GH Archive (README)](https://github.com/igrigorik/gharchive.org/blob/master/bigquery/README.md) — Documents GH Archive availability on Google BigQuery with automatic hourly updates, enabling SQL queries over the entire GitHub event history.
-
-[14] [REST API endpoints for pull requests (GitHub Documentation)](https://docs.github.com/en/rest/pulls/pulls) — Documents REST API endpoints for listing, viewing, and filtering pull requests, including the merged_by field for identifying merge authors.
-
-[15] [The Cox Proportional Hazards Model (Survival Analysis)](https://doi.org/10.1093/acprof:oso/9780195337518.003.0004) — Standard reference for Cox Proportional Hazards model, the recommended statistical method for time-to-event analysis of project survival post-TFDD.
-
-[16] [On the abandonment and survival of open source projects: Replication package (Avelino et al., 2019)](https://zenodo.org/records/2546008) — Replication package containing data and scripts used in the Avelino et al. 2019 study, enabling reproduction and extension of their analysis.
-
-[17] [Defining Open-Source Software Success and Abandonment (Internet Success, 2012)](https://doi.org/10.7551/mitpress/8413.003.0013) — Early work defining OSS success and abandonment criteria, providing historical context for how the field has evolved in defining project survival.
+[10] [Two case studies of open source software development: Apache and Mozilla (Mockus et al., 2002)](https://doi.org/10.1145/503269.503272) — Foundational study showing OSS projects rely on small core teams. Established the 'onion model' of contributor layers (core, active, peripheral).
 
 ## Follow-up Questions
 
-- Can the shape of a founder's exit trajectory (abrupt departure vs. gradual fade vs. planned succession) predict survival better than static snapshots of project health at the time of departure?
-- How do non-code contributions (issue triage, documentation, community management, code review) factor into project survival when the founder departs — and can these be reliably measured from GitHub data?
-- What role does organizational backing (corporate sponsorship, foundation support, grant funding) play in mediating the relationship between founder departure and project survival, and how can this be operationalized as a control variable?
+- Can we operationalize and validate distinct 'fade shapes' (gradual linear decline, exponential decay, step function) as measurable features from commit/merge/review time series, and do they differentially predict survival?
+- Does the interaction between founder fade shape and project social popularity (stars/forks) moderate survival outcomes—i.e., does gradual fade matter more for highly visible projects?
+- Can multi-channel involvement trajectories (commits + merges + reviews) reveal departure patterns invisible when using commits alone, and do these patterns improve predictive accuracy over single-channel baselines?
 
 ---
 *Generated by AI Inventor Pipeline*
