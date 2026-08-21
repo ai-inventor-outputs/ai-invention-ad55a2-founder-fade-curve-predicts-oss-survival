@@ -1,0 +1,45 @@
+{
+  "datasets": [
+    {
+      "dataset": "oss_founder_departure",
+      "examples": [
+        {
+          "input": "{\"project_id\": \"oss_project_000\", \"founder_id\": \"founder_2586\", \"monthly_founders_share_commits\": [0.548, 0.478, 0.455, 0.429, 0.202, 0.301], \"monthly_founders_share_merges\": [0.515, 0.471, 0.516, 0.4...",
+          "output": "1",
+          "metadata_row_index": 0,
+          "metadata_task_type": "classification",
+          "metadata_n_classes": 2,
+          "metadata_feature_names": [
+            "project_id",
+            "founder_id",
+            "monthly_founders_share_commits"
+          ]
+        },
+        {
+          "input": "{\"project_id\": \"oss_project_001\", \"founder_id\": \"founder_3395\", \"monthly_founders_share_commits\": [0.481, 0.369, 0.527, 0.437, 0.495, 0.411, 0.479, 0.418, 0.324, 0.392, 0.29, 0.196, 0.235, 0.127, 0.18...",
+          "output": "1",
+          "metadata_row_index": 1,
+          "metadata_task_type": "classification",
+          "metadata_n_classes": 2,
+          "metadata_feature_names": [
+            "project_id",
+            "founder_id",
+            "monthly_founders_share_commits"
+          ]
+        },
+        {
+          "input": "{\"project_id\": \"oss_project_002\", \"founder_id\": \"founder_4395\", \"monthly_founders_share_commits\": [0.75, 0.58, 0.625, 0.537, 0.471, 0.469, 0.306, 0.456, 0.286, 0.171], \"monthly_founders_share_merges\":...",
+          "output": "1",
+          "metadata_row_index": 2,
+          "metadata_task_type": "classification",
+          "metadata_n_classes": 2,
+          "metadata_feature_names": [
+            "project_id",
+            "founder_id",
+            "monthly_founders_share_commits"
+          ]
+        }
+      ]
+    }
+  ]
+}
