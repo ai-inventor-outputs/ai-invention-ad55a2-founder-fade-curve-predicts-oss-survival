@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "experiment_id": "art_501ZvV17S5Y5",
+    "evaluation_date": "2026-08-21T01:20:12.334987+00:00",
+    "n_projects": 3,
+    "n_survived": 2,
+    "n_collapsed": 1
+  },
+  "project_table": [
+    {
+      "repo": "project_alpha",
+      "survival_label": 1,
+      "static_features": {
+        "project_age_months": 24.5,
+        "contributor_count": 15,
+        "total_commits": 1200,
+        "file_count": 45,
+        "bus_factor": 8
+      },
+      "composite_descriptors": {
+        "slope": 0.12,
+        "r2_linear": 0.85,
+        "normalized_slope": 0.15,
+        "quadratic_coef": -0.001,
+        "onset_decline_month": 18.0,
+        "decline_duration_fraction": 0.25,
+        "cliff_indicator": 0,
+        "plateau_then_cliff": 0,
+        "fade_index": 0.3
+      }
+    },
+    {
+      "repo": "project_beta",
+      "survival_label": 1,
+      "static_features": {
+        "project_age_months": 36.0,
+        "contributor_count": 25,
+        "total_commits": 3500,
+        "file_count": 120,
+        "bus_factor": 12
+      },
+      "composite_descriptors": {
+        "slope": 0.05,
+        "r2_linear": 0.92,
+        "normalized_slope": 0.08,
+        "quadratic_coef": -0.0005,
+        "onset_decline_month": 30.0,
+        "decline_duration_fraction": 0.15,
+        "cliff_indicator": 0,
+        "plateau_then_cliff": 0,
+        "fade_index": 0.15
+      }
+    },
+    {
+      "repo": "project_gamma",
+      "survival_label": 0,
+      "static_features": {
+        "project_age_months": 12.0,
+        "contributor_count": 5,
+        "total_commits": 300,
+        "file_count": 15,
+        "bus_factor": 2
+      },
+      "composite_descriptors": {
+        "slope": -0.25,
+        "r2_linear": 0.78,
+        "normalized_slope": -0.35,
+        "quadratic_coef": 0.002,
+        "onset_decline_month": 6.0,
+        "decline_duration_fraction": 0.50,
+        "cliff_indicator": 1,
+        "plateau_then_cliff": 1,
+        "fade_index": 0.85
+      }
+    }
+  ],
+  "model_comparison": {
+    "static_only": {
+      "y_pred_proba": [0.72, 0.85, 0.28],
+      "y_pred": [1, 1, 0]
+    },
+    "shape_only": {
+      "y_pred_proba": [0.35, 0.42, 0.65],
+      "y_pred": [0, 0, 1]
+    },
+    "combined": {
+      "y_pred_proba": [0.78, 0.88, 0.32],
+      "y_pred": [1, 1, 0]
+    }
+  },
+  "coxph": {
+    "concordance_index": 0.833
+  }
+}
