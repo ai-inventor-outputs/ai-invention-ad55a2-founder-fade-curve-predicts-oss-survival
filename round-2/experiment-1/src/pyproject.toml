@@ -1,0 +1,19 @@
+[project]
+name = "founder-fade-curve-oss-survival"
+version = "0.1.0"
+description = "Founder Fade Curve OSS Survival Analysis - Statistical analysis comparing founder fade-curve descriptors against static features for predicting OSS project survival after founder departure"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy==2.5.2",
+    "pandas==2.3.3",
+    "scikit-learn==1.9.0",
+    "scipy==1.18.0",
+    "lifelines==0.30.3",
+    "matplotlib==3.11.1",
+    "joblib==1.5.3",
+    "loguru==0.7.3",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
