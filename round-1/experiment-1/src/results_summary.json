@@ -1,0 +1,65 @@
+{
+  "title": "Founder Fade Curves as Predictors of OSS Survival",
+  "metrics": {
+    "model_a_static": {
+      "auc_mean": 0.5200098109266189,
+      "auc_std": 0.05409625369543071,
+      "log_loss_mean": 0.6983026100095816,
+      "log_loss_std": 0.01395468387353459
+    },
+    "model_b_fade": {
+      "auc_mean": 0.9776048301515194,
+      "auc_std": 0.005750111094559371,
+      "log_loss_mean": 0.18936560017501786,
+      "log_loss_std": 0.02463471468792712
+    },
+    "model_c_combined": {
+      "auc_mean": 0.9759033955129031,
+      "auc_std": 0.00676221474503046,
+      "log_loss_mean": 0.19595274306657082,
+      "log_loss_std": 0.02268219603587986
+    },
+    "model_d_static": {
+      "r2_mean": -0.023471232628676654,
+      "r2_std": 0.020711810043415844,
+      "mse_mean": 0.13402178356226618,
+      "mse_std": 0.003268715583543578
+    },
+    "model_e_fade": {
+      "r2_mean": 0.861384452118436,
+      "r2_std": 0.02611765946853102,
+      "mse_mean": 0.018107660815142135,
+      "mse_std": 0.003211169843866588
+    },
+    "model_f_combined": {
+      "r2_mean": 0.8604889551185174,
+      "r2_std": 0.02701712525313276,
+      "mse_mean": 0.018226044247269358,
+      "mse_std": 0.003337261573425383
+    },
+    "falsification": {
+      "shuffled_fade_auc": 0.445327172916307,
+      "significant_difference": true
+    }
+  },
+  "feature_importance": {
+    "fade_descriptors": {
+      "slope": 0.11486666666666669,
+      "convexity": 0.11433333333333337,
+      "decline_start": 0.006733333333333339,
+      "cliff_score": -0.00526666666666666,
+      "is_plateau": 0.033733333333333365,
+      "fade_idx": -0.003733333333333333
+    },
+    "static_descriptors": {
+      "bus_factor": -0.0008000000000000007,
+      "contributor_count": -0.002200000000000002,
+      "project_age": 0.00020000000000000017,
+      "stars": -0.0016000000000000014,
+      "file_count": -0.0032000000000000028
+    }
+  },
+  "directionality": "Positive correlation between fade_idx and survival (r=0.564)",
+  "falsification_result": "Significant difference in AUC",
+  "n_projects": 500
+}

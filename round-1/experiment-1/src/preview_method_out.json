@@ -1,25 +1,41 @@
 {
+  "metadata": {
+    "method_name": "Founder_Fade_Curves_Experiment",
+    "description": "Comparative study evaluating whether temporal shape of founder involvement predicts OSS survival",
+    "n_projects": 500,
+    "n_static_features": 5,
+    "n_fade_features": 6
+  },
   "datasets": [
     {
-      "dataset": "founder_fade_curve_pilot",
+      "dataset": "synthetic_oss_survival",
       "examples": [
         {
-          "input": "Synthetic trajectory 0 (smooth_fade)",
-          "output": "{\"pattern\": \"smooth_fade\", \"fade_index\": 0.929482443722079, \"cliff_indicator\": 0.1863005354505118, \"slope\": -0.035931403028780125, \"r2_linear\": 0.9392973129410012, \"decline_duration_fraction\": 0.58333...",
-          "metadata_pattern": "smooth_fade",
-          "metadata_trajectory_index": "0"
+          "input": "Project proj_0000: bus_factor=5, contributors=18, age=14mo, stars=109, files=55, fade_slope=-0.0020, fade_convexity=-0.0063, fade_decline_start=0.0, fade_cliff=0.6672, fade_plateau=0.0, fade_idx=0.832...",
+          "output": "0",
+          "metadata_project_id": "proj_0000",
+          "metadata_fold": 0,
+          "predict_static_only": "0.4809",
+          "predict_fade_only": "0.7843",
+          "predict_combined": "0.7795"
         },
         {
-          "input": "Synthetic trajectory 1 (smooth_fade)",
-          "output": "{\"pattern\": \"smooth_fade\", \"fade_index\": 0.9573859975282857, \"cliff_indicator\": 0.19135186590959496, \"slope\": -0.0347828157993026, \"r2_linear\": 0.9397389940614302, \"decline_duration_fraction\": 0.58333...",
-          "metadata_pattern": "smooth_fade",
-          "metadata_trajectory_index": "1"
+          "input": "Project proj_0001: bus_factor=2, contributors=18, age=121mo, stars=140, files=55, fade_slope=-0.0306, fade_convexity=-0.0088, fade_decline_start=10.0, fade_cliff=0.8508, fade_plateau=1.0, fade_idx=0.6...",
+          "output": "0",
+          "metadata_project_id": "proj_0001",
+          "metadata_fold": 0,
+          "predict_static_only": "0.5616",
+          "predict_fade_only": "0.0000",
+          "predict_combined": "0.0000"
         },
         {
-          "input": "Synthetic trajectory 2 (smooth_fade)",
-          "output": "{\"pattern\": \"smooth_fade\", \"fade_index\": 0.9257497596324193, \"cliff_indicator\": 0.2438051950555279, \"slope\": -0.035225012322837056, \"r2_linear\": 0.9414560084910495, \"decline_duration_fraction\": 0.5833...",
-          "metadata_pattern": "smooth_fade",
-          "metadata_trajectory_index": "2"
+          "input": "Project proj_0002: bus_factor=4, contributors=20, age=40mo, stars=141, files=57, fade_slope=-0.0040, fade_convexity=-0.0018, fade_decline_start=39.0, fade_cliff=0.8285, fade_plateau=1.0, fade_idx=0.67...",
+          "output": "0",
+          "metadata_project_id": "proj_0002",
+          "metadata_fold": 0,
+          "predict_static_only": "0.5141",
+          "predict_fade_only": "0.0618",
+          "predict_combined": "0.0641"
         }
       ]
     }
