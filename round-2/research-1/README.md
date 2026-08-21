@@ -1,22 +1,18 @@
-# Citation Verification & Real OSS Survival Papers
+# Temporal Methods for OSS Survival Prediction
 
 `demo/` — Self-contained demo (Colab-ready notebook or markdown). Run without setup.  
 `src/` — Full source code, data, and outputs from the experiment execution.
 
 **Type:** research  
-**ID:** `art_BCR-_cTiEwyd`
+**ID:** `art_y_Lh0pg5kgV5`
 
 ## Layman Summary
 
-Verified 22 citations from the Founder Fade Curve paper, found 3 fabricated papers, and identified real replacements with full bibliographic data.
+This research maps existing temporal methods for predicting open-source project survival and identifies how our founder fade curve approach advances the field by focusing on founder-specific involvement patterns.
 
 ## Full Summary
 
-This research systematically verified all 15 references from the iter_1 literature survey plus 7 hypothesis-related works cited in the Founder Fade Curve hypothesis. Key findings: (1) Of 15 original references, 11 are fully verified (Avelino 2019, Nourry 2024, Avelino 2016 truck factor, GHTorrent, GH Archive, BigQuery, GitHub APIs, SciPy, ruptures, Theil-Sen, Wikipedia), 2 could not be verified (MIT Press chapter on OSS success/abandonment at DOI 10.7551/mitpress/8413.003.0013, PeerJ preprint on truck factor at DOI 10.7287/peerj.preprints.1233v2), and 1 is partial (OSF scaffolding preprint DOI 10.35542/osf.io/5eutb_v1 exists but content could not be verified). (2) Of 7 hypothesis-related works: Kaushik & Chahal (2026) 'Death Spiral' was VERIFIED and is real (JSS 2026, arXiv:2605.11844); Vygotsky (1978) and Wood/Bruner/Ross (1976) are verified classics; but Chen et al. (ICSE 2026) on core contributor disengagement, Karim et al. (2026) on deep temporal neural architectures, and Noori et al. (2025) on governance transition are FABRICATED. (3) Real replacements were identified: for Chen et al. -> 'Will You Come Back to Contribute?' (Empirical Software Engineering 2022); for Karim et al. -> 'Predicting long-time contributors' (Information and Software Technology 2021); for Noori et al. -> 'Governance in Practice' (2026). (4) Supplementary work found includes: Chengalur-Smith et al. (2010) on longitudinal OSS sustainability, Yehudi et al. (2023) showing context-free indicators fail, 'Being a Mentor in OSS' (2021) on scaffolding in practice, and 'Exploring Community Smells' (TSE 2019) on temporal community degradation. (5) Positioning analysis: The Founder Fade Curve hypothesis occupies a unique space between static TFDD frameworks (Avelino, Nourry) and aggregate temporal studies, by focusing specifically on the SHAPE of founder withdrawal trajectories rather than binary departure events.
-
-## Dependencies
-
-- `art_XZccH0dIj4ss` — foundation
+This research investigated temporal methods used for predicting Open Source Software (OSS) project survival outcomes. The investigation focused on three main categories: survival analysis with time-varying covariates, deep learning sequence models (LSTM/GRU/Transformer), and workflow/dynamics analysis. The key finding is that while existing temporal methods primarily use aggregate project-level metrics or focus on process-level workflow patterns, no prior work specifically models founder-specific involvement trajectories or applies scaffolding/fading theory to understand founder departure impacts. Our founder fade curve approach advances the field by isolating founder behavior, extracting interpretable shape descriptors, and implementing falsification controls to test founder-specific effects.
 
 ## Output Files
 
