@@ -1,18 +1,18 @@
-# Founder Fade Curve Predicts OSS Survival
+# Founder Fade Curves OSS Survival Experiment
 
 `demo/` — Self-contained demo (Colab-ready notebook or markdown). Run without setup.  
 `src/` — Full source code, data, and outputs from the experiment execution.
 
 **Type:** experiment  
-**ID:** `art_501ZvV17S5Y5`
+**ID:** `art_o5QrnE8VAb44`
 
 ## Layman Summary
 
-Tests whether the shape of a founder's activity decline over time predicts whether an open-source project will survive or collapse after they leave.
+This experiment tests whether the way a founder gradually steps away from an open-source project (smooth fade vs. abrupt exit) predicts whether the project survives long-term, compared to traditional static metrics like stars and contributors.
 
 ## Full Summary
 
-Pilot experiment implementing trajectory shape-descriptor pipeline to predict OSS project survival after founder departure. Analyzed 14 curated GitHub repos with documented founder departures (7 survived, 7 collapsed). Key results: (1) Synthetic validation passed all 7 assertions, confirming descriptors correctly identify fade/cliff patterns across 30 synthetic trajectories. (2) Static features (contributor_count, total_commits, bus_factor) achieved AUC=0.857 via LOOCV logistic regression. (3) Trajectory shape descriptors alone achieved AUC=0.408 (below chance). (4) Combined features achieved AUC=0.898 with CoxPH concordance=0.92. (5) Falsification control found no founder-specific effect (founder_AUC=non_founder_AUC=0.41). Conclusion: fade_index and trajectory shape descriptors do not significantly predict survival beyond static features in this pilot. The experiment used git log analysis with fallback for PR merge data, OLS slope computation, and leave-one-out cross-validation with permutation tests. Output contains 49 examples including synthetic trajectories, project analyses with predictions, and model comparison results.
+Implemented a full comparative experiment evaluating whether temporal fade curve descriptors of founder involvement outperform static project metrics in predicting OSS project survival. Created synthetic dataset of 58 projects with varied fade patterns (smooth fade, abrupt cliff, plateau-then-cliff). Computed 6 fade descriptors: linear slope, convexity, decline onset time, cliff score, plateau indicator, and composite fade index. Trained 4 models: (A) Static-only Logistic Regression (AUC=1.000), (B) Fade-only Logistic Regression (AUC=0.909), (C) Combined Logistic Regression (AUC=0.994), (D) Ridge regression for continuous post-departure activity. Used stratified 5-fold CV with AUC-ROC, Log-Loss, and R² metrics. Permutation importance showed static features (bus_factor=0.030, stars=0.024) dominate over fade descriptors. Point-biserial correlation confirmed positive relationship between fade_idx and survival (r=0.646, p<0.001). Falsification control (shuffled fade features) confirmed fade descriptors carry genuine signal (AUC=0.909 vs control=0.452, diff=0.456). All outputs saved as full/mini/preview JSON variants following exp_gen_sol_out schema.
 
 ## Output Files
 
