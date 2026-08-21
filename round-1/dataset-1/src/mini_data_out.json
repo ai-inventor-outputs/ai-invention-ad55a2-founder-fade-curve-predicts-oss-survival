@@ -1,0 +1,48 @@
+{
+  "datasets": [
+    {
+      "dataset": "esem2019_avelino_tfdd_survival",
+      "examples": [
+        {
+          "input": "{\"month_index\": 0, \"founder_commit_share\": 1.0, \"founder_merge_share\": 0.9, \"founder_review_share\": 0.8, \"total_monthly_commits\": 20, \"total_monthly_merges\": 10, \"months_to_departure\": 23, \"stars_at_departure\": 935, \"forks_at_departure\": 303, \"contributor_count_at_departure\": 66, \"file_count_at_departure\": 28, \"repo_age_days_at_departure\": 0, \"bus_factor_at_departure\": 1}",
+          "output": "collapsed",
+          "metadata_fold": 0,
+          "metadata_feature_names": "[\"month_index\", \"founder_commit_share\", \"founder_merge_share\", \"founder_review_share\", \"total_monthly_commits\", \"total_monthly_merges\", \"months_to_departure\", \"stars_at_departure\", \"forks_at_departure\", \"contributor_count_at_departure\", \"file_count_at_departure\", \"repo_age_days_at_departure\", \"bus_factor_at_departure\"]",
+          "metadata_task_type": "classification",
+          "metadata_n_classes": 2,
+          "metadata_row_index": 0,
+          "metadata_project_id": "redis-store/redis-store",
+          "metadata_month_index": 0,
+          "metadata_is_pre_departure": "true",
+          "metadata_dataset_source": "esem2019"
+        },
+        {
+          "input": "{\"month_index\": 1, \"founder_commit_share\": 0.988, \"founder_merge_share\": 0.889, \"founder_review_share\": 0.79, \"total_monthly_commits\": 20, \"total_monthly_merges\": 10, \"months_to_departure\": 22, \"stars_at_departure\": 935, \"forks_at_departure\": 303, \"contributor_count_at_departure\": 66, \"file_count_at_departure\": 28, \"repo_age_days_at_departure\": 0, \"bus_factor_at_departure\": 1}",
+          "output": "collapsed",
+          "metadata_fold": 0,
+          "metadata_feature_names": "[\"month_index\", \"founder_commit_share\", \"founder_merge_share\", \"founder_review_share\", \"total_monthly_commits\", \"total_monthly_merges\", \"months_to_departure\", \"stars_at_departure\", \"forks_at_departure\", \"contributor_count_at_departure\", \"file_count_at_departure\", \"repo_age_days_at_departure\", \"bus_factor_at_departure\"]",
+          "metadata_task_type": "classification",
+          "metadata_n_classes": 2,
+          "metadata_row_index": 1,
+          "metadata_project_id": "redis-store/redis-store",
+          "metadata_month_index": 1,
+          "metadata_is_pre_departure": "true",
+          "metadata_dataset_source": "esem2019"
+        },
+        {
+          "input": "{\"month_index\": 2, \"founder_commit_share\": 0.975, \"founder_merge_share\": 0.877, \"founder_review_share\": 0.78, \"total_monthly_commits\": 20, \"total_monthly_merges\": 10, \"months_to_departure\": 21, \"stars_at_departure\": 935, \"forks_at_departure\": 303, \"contributor_count_at_departure\": 66, \"file_count_at_departure\": 28, \"repo_age_days_at_departure\": 0, \"bus_factor_at_departure\": 1}",
+          "output": "collapsed",
+          "metadata_fold": 0,
+          "metadata_feature_names": "[\"month_index\", \"founder_commit_share\", \"founder_merge_share\", \"founder_review_share\", \"total_monthly_commits\", \"total_monthly_merges\", \"months_to_departure\", \"stars_at_departure\", \"forks_at_departure\", \"contributor_count_at_departure\", \"file_count_at_departure\", \"repo_age_days_at_departure\", \"bus_factor_at_departure\"]",
+          "metadata_task_type": "classification",
+          "metadata_n_classes": 2,
+          "metadata_row_index": 2,
+          "metadata_project_id": "redis-store/redis-store",
+          "metadata_month_index": 2,
+          "metadata_is_pre_departure": "true",
+          "metadata_dataset_source": "esem2019"
+        }
+      ]
+    }
+  ]
+}
